@@ -3,18 +3,27 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "react-router build",
-    "dev": "react-router dev",
+    "rbuild": "react-router build",
+    "vbuild": "vite build",
+    "vdev": "vite dev",
+    "rdev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "vstart": "vite-node ./build/server/index.js",
+    "typecheck": "react-router typegen && tsc",
+    "build": "node scripts/update-build.js && remix build",
+    "dev": "remix dev"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.2",
+    "@heroicons/react": "^2.2.0",
     "@react-router/node": "^7.5.3",
     "@react-router/serve": "^7.5.3",
+    "@supabase/supabase-js": "^2.49.4",
     "isbot": "^5.1.27",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router": "^7.5.3"
+    "react-router": "^7.5.3",
+    "react-router-dom": "^7.5.3"
   },
   "devDependencies": {
     "@react-router/dev": "^7.5.3",
