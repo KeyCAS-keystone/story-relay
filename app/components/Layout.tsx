@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useRef, useEffect } from 'react';
+import AdminAccess from './AdminAccess';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -37,7 +38,7 @@ export default function Layout({ children }: LayoutProps) {
   const displayAvatarUrl = avatarUrl || user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user?.email?.split('@')[0] || 'User'}&background=random`;
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       <nav className="bg-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -60,20 +61,9 @@ export default function Layout({ children }: LayoutProps) {
                 >
                   Submit Story
                 </Link>
-                <Link
-                  to="/admin"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                >
-                  Admin Panel
-                </Link>
               </div>
             </div>
             <div className="flex items-center">
-              {/* Debug indicator */}
-              <div className="mr-3 text-xs">
-                {loading ? '⏳ Loading...' : (user ? '✅ Logged in' : '❌ Not logged in')}
-              </div>
-              
               {loading ? (
                 // Show loading indicator instead of null
                 <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse"></div>
@@ -112,9 +102,20 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main className="flex-grow max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {children}
       </main>
+
+      <footer className="bg-white shadow-lg mt-auto">
+        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-gray-500">
+              © 2024 Story Relay. All rights reserved.
+            </div>
+            <AdminAccess />
+          </div>
+        </div>
+      </footer>
     </div>
   );
 } 

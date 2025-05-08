@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Node {
   id: string;
@@ -9,14 +11,53 @@ interface Node {
   position: number;
 }
 
+const LOCAL_STORAGE_KEY = 'storyRelaySubmitFormData';
+
 export default function Submit() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  
   const [parentNodes, setParentNodes] = useState<Node[]>([]);
-  const [selectedNodeId, setSelectedNodeId] = useState<string>('');
-  const [content, setContent] = useState('');
-  const [summary, setSummary] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  
+  const [selectedNodeId, setSelectedNodeId] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+      return savedData ? JSON.parse(savedData).selectedNodeId || '' : '';
+    }
+    return '';
+  });
+  const [content, setContent] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+      return savedData ? JSON.parse(savedData).content || '' : '';
+    }
+    return '';
+  });
+  const [summary, setSummary] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+      return savedData ? JSON.parse(savedData).summary || '' : '';
+    }
+    return '';
+  });
+
+  useEffect(() => {
+    if (location.state?.parentNodeId) {
+      setSelectedNodeId(location.state.parentNodeId);
+      window.history.replaceState({}, document.title)
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const formData = JSON.stringify({ selectedNodeId, content, summary });
+      localStorage.setItem(LOCAL_STORAGE_KEY, formData);
+    }
+  }, [selectedNodeId, content, summary]);
 
   useEffect(() => {
     fetchParentNodes();
@@ -40,24 +81,27 @@ export default function Submit() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
     setLoading(true);
     setError('');
     setSuccess(false);
 
     try {
-      // Validate content length (1-5 sentences)
       const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
       if (sentences.length < 1 || sentences.length > 5) {
         throw new Error('Please write 1-5 sentences');
       }
 
-      // Get the selected parent node
       const parentNode = parentNodes.find(n => n.id === selectedNodeId);
       if (!parentNode) {
         throw new Error('Please select a parent story');
       }
 
-      // Count existing children of the selected parent
       const { data: existingChildren, error: countError } = await supabase
         .from('nodes')
         .select('position')
@@ -71,22 +115,28 @@ export default function Submit() {
         throw new Error('This story branch has reached its maximum number of continuations (5)');
       }
 
-      // Create the submission
       const { error: submitError } = await supabase
         .from('submissions')
         .insert({
           node_id: selectedNodeId,
+          author_id: user.id,
           content,
           summary,
-          status: 'pending'
+          status: 'pending',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         });
 
-      if (submitError) throw submitError;
+      if (submitError) {
+        console.error('Submission error:', submitError);
+        throw submitError;
+      }
 
       setSuccess(true);
       setContent('');
       setSummary('');
       setSelectedNodeId('');
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Failed to submit story');
     } finally {
@@ -97,7 +147,7 @@ export default function Submit() {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Submit Your Story</h1>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8">Submit Your Story</h1>
         
         {error && (
           <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
@@ -113,27 +163,27 @@ export default function Submit() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="parent" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="parent" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
               Continue from:
             </label>
             <select
               id="parent"
               value={selectedNodeId}
               onChange={(e) => setSelectedNodeId(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white"
               required
             >
               <option value="">Select a story to continue from</option>
               {parentNodes.map((node) => (
                 <option key={node.id} value={node.id}>
-                  {node.summary}
+                  {node.summary} ({node.content.substring(0, 30)}...)
                 </option>
               ))}
             </select>
           </div>
 
           <div>
-            <label htmlFor="content" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="content" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
               Your Story (1-5 sentences)
             </label>
             <textarea
@@ -141,13 +191,13 @@ export default function Submit() {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={4}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="summary" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="summary" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
               Summary
             </label>
             <input
@@ -155,7 +205,7 @@ export default function Submit() {
               id="summary"
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white"
               required
             />
           </div>

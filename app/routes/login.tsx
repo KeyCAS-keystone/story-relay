@@ -49,7 +49,7 @@ export default function Login() {
         provider: 'azure',
         options: {
           scopes: 'openid email profile user.read',
-          redirectTo: `${window.location.origin}/submit`
+          redirectTo: `${window.location.origin}/`
         }
       });
 
@@ -64,7 +64,7 @@ export default function Login() {
   return (
     <Layout>
       <div className="max-w-md mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Sign In</h1>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8">Sign In</h1>
 
         {error && (
           <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
@@ -74,7 +74,7 @@ export default function Login() {
 
         <div className="space-y-6">
           <div className="text-center">
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 dark:text-gray-300 mb-4">
               Please sign in with your Keystone Academy Microsoft account
             </p>
             <button
@@ -98,7 +98,7 @@ export default function Login() {
             </button>
           </div>
 
-          <div className="text-center text-sm text-gray-500">
+          <div className="text-center text-sm text-gray-500 dark:text-gray-400">
             <p>Only @student.keystoneacademy.cn and @keystoneacademy.cn email addresses are allowed</p>
           </div>
         </div>
