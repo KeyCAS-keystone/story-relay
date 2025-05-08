@@ -78,7 +78,7 @@ export default function Admin() {
         .order('created_at', { ascending: false });
 
       if (existingNodesError) throw existingNodesError;
-      
+
       const approvedRejectedNodes: Node[] = (existingNodesData || []).map(node => {
           const authorData = Array.isArray(node.author) ? node.author[0] : node.author;
           return {
@@ -234,7 +234,7 @@ export default function Admin() {
           // Item was already in 'nodes' (e.g. an approved node being re-rejected)
           console.log('[Admin] Updating node status to rejected in nodes table:', nodeId);
           const { error: updateError } = await supabase
-            .from('nodes')
+          .from('nodes')
             .update({ status: 'rejected' })
             .eq('id', nodeId);
           if (updateError) {
@@ -308,7 +308,7 @@ export default function Admin() {
                   >
                     <div className="space-y-3">
                       <div className="flex justify-between items-start">
-                        <div>
+                  <div>
                           <h3 className="text-lg font-medium text-gray-900">{node.summary}</h3>
                           <p className="text-sm text-gray-500">
                             By {node.author_username || node.author_email}
@@ -323,34 +323,34 @@ export default function Admin() {
                             {node.status.charAt(0).toUpperCase() + node.status.slice(1)}
                           </span>
                         </div>
-                      </div>
+                  </div>
 
                       <div className="max-h-[100px] overflow-y-auto">
                         <p className="text-gray-600 text-sm">{node.content}</p>
-                      </div>
+                  </div>
 
                       <div className="text-xs text-gray-500">
                         {new Date(node.created_at).toLocaleString()}
-                      </div>
+                  </div>
 
                       {node.status === 'pending' && (
                         <div className="flex justify-end space-x-4 pt-3 border-t">
-                          <button
+                    <button
                             onClick={e => { e.stopPropagation(); handleReview(node.id, 'rejected'); }}
                             className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                          >
-                            Reject
-                          </button>
-                          <button
+                    >
+                      Reject
+                    </button>
+                    <button
                             onClick={e => { e.stopPropagation(); handleReview(node.id, 'approved'); }}
                             className="px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                          >
-                            Approve
-                          </button>
+                    >
+                      Approve
+                    </button>
                         </div>
                       )}
-                    </div>
                   </div>
+                </div>
                 ))}
               </div>
               {/* 画线：只在不是最后一层时绘制 */}

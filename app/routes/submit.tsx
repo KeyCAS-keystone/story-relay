@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import AdminAccess from '../components/AdminAccess';
 
 interface Node {
   id: string;
@@ -146,7 +147,7 @@ export default function Submit() {
 
   return (
     <Layout>
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto pb-20">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8">Submit Your Story</h1>
         
         {error && (
@@ -218,6 +219,27 @@ export default function Submit() {
             {loading ? 'Submitting...' : 'Submit Story'}
           </button>
         </form>
+      </div>
+
+      {/* Fixed Footer */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg z-20">
+        <div className="w-full py-4 px-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-6 pl-20">
+              <div className="flex items-center space-x-2">
+                <p className="text-sm text-black">Hosted by Round Square Executive Team</p>
+                <img src="/assets/RS.png" alt="Round Square Logo" className="h-4 w-auto brightness-100"/>
+              </div>
+              <a href="https://keycas.cn" target="_blank" rel="noopener noreferrer" className="flex items-center text-black space-x-2 hover:opacity-80 transition-opacity">
+                <p className="text-sm">Powered by KeyCAS</p>
+                <img src="/assets/KeyCAS.svg" alt="KeyCAS Logo" className="h-4 w-auto brightness-0"/>
+              </a>
+            </div>
+            <div className="pr-20">
+              <AdminAccess />
+            </div>
+          </div>
+        </div>
       </div>
     </Layout>
   );

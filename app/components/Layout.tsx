@@ -1,7 +1,6 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useRef, useEffect } from 'react';
-import AdminAccess from './AdminAccess';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -11,6 +10,8 @@ export default function Layout({ children }: LayoutProps) {
   const { user, loading, signOut, avatarUrl } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   // Debug logging
   useEffect(() => {
@@ -40,12 +41,15 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <nav className="bg-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4">
           <div className="flex justify-between h-16">
             <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <Link to="/" className="text-xl font-bold text-gray-800">
-                  Story Relay
+              <div className="flex-shrink-0 flex items-center pl-10">
+                <Link to="/" className="flex items-center space-x-3">
+                  <img src="/assets/RS.png" alt="Round Square Logo" className="h-8 w-auto"/>
+                  <span className="text-xl font-bold text-gray-800">
+                    Round Square Day Story Relay
+                  </span>
                 </Link>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
@@ -63,9 +67,8 @@ export default function Layout({ children }: LayoutProps) {
                 </Link>
               </div>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center pr-10">
               {loading ? (
-                // Show loading indicator instead of null
                 <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse"></div>
               ) : user ? (
                 <div className="relative" ref={dropdownRef}>
@@ -105,17 +108,6 @@ export default function Layout({ children }: LayoutProps) {
       <main className="flex-grow max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {children}
       </main>
-
-      <footer className="bg-white shadow-lg mt-auto">
-        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center">
-            <div className="text-sm text-gray-500">
-              © 2024 Story Relay. All rights reserved.
-            </div>
-            <AdminAccess />
-          </div>
-        </div>
-      </footer>
     </div>
   );
 } 

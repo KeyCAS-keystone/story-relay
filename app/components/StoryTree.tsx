@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
+import AdminAccess from './AdminAccess';
 
 interface Node {
   id: string;
@@ -31,6 +32,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
   const [viewportCenter, setViewportCenter] = useState<number>(0);
   const [cardPositions, setCardPositions] = useState<Map<string, number>>(new Map());
   const [connectionLines, setConnectionLines] = useState<ConnectionLine[]>([]);
+  const [showFooter, setShowFooter] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -250,6 +252,28 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
 
   const buttonClasses = "px-3 py-1 bg-indigo-400 text-white text-xs font-medium rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-400 transition-colors flex-shrink-0";
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+      const distanceToBottom = scrollHeight - scrollTop - clientHeight;
+      setShowFooter(distanceToBottom < 50);
+    };
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      // Initial check
+      handleScroll();
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, []);
+
   return (
     <div
       ref={containerRef}
@@ -257,7 +281,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
       style={{
         top: `${navbarHeight}px`,
         width: '100vw',
-        height: `calc(100vh - ${navbarHeight}px - ${footerHeight}px)`,
+        height: `calc(100vh - ${navbarHeight}px)`,
         zIndex: 10,
       }}
     >
@@ -399,6 +423,37 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
             })}
           </div>
         ))}
+        {/* Footer as part of the scrollable content */}
+        <div 
+          className="w-full bg-white shadow-lg transition-opacity duration-300" 
+          style={{ 
+            position: 'fixed', 
+            bottom: 0, 
+            left: 0, 
+            right: 0, 
+            zIndex: 20,
+            opacity: showFooter ? 1 : 0,
+            pointerEvents: showFooter ? 'auto' : 'none'
+          }}
+        >
+          <div className="w-full py-4 px-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-6 pl-20">
+                <div className="flex items-center space-x-2">
+                  <p className="text-sm text-black">Hosted by Round Square Executive Team</p>
+                  <img src="/assets/RS.png" alt="Round Square Logo" className="h-4 w-auto brightness-100"/>
+                </div>
+                <a href="https://keycas.cn" target="_blank" rel="noopener noreferrer" className="flex items-center text-black space-x-2 hover:opacity-80 transition-opacity">
+                  <p className="text-sm">Powered by KeyCAS</p>
+                  <img src="/assets/KeyCAS.svg" alt="KeyCAS Logo" className="h-4 w-auto brightness-0"/>
+                </a>
+              </div>
+              <div className="pr-20">
+                <AdminAccess />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

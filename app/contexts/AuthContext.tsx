@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('AuthProvider: Auth state changed', session);
       setUser(session?.user ?? null);
-      setLoading(false);
+          setLoading(false);
 
       if (session?.user) {
         // 同步用户到 users 表
@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (upsertError) {
           console.error('Error syncing user:', upsertError);
-        }
+      }
 
         // 获取 Microsoft 头像
         try {
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         } catch (error) {
           console.error('Error fetching Microsoft avatar:', error);
-        }
+      }
       }
     });
 
@@ -74,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    setUser(null);
+      setUser(null);
     setAvatarUrl(null);
   };
 

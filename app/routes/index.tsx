@@ -92,11 +92,11 @@ export default function Home() {
   return (
     <Layout>
       <div className="w-full">
-        {nodes.length === 0 ? (
-          <p className="text-gray-500 text-center">No stories yet. Be the first to start!</p>
-        ) : (
+          {nodes.length === 0 ? (
+            <p className="text-gray-500 text-center">No stories yet. Be the first to start!</p>
+          ) : (
           <StoryTree nodes={nodes} />
-        )}
+          )}
       </div>
     </Layout>
   );
