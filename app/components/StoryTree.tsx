@@ -137,8 +137,14 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
   }, [calculateConnectionLines]);
 
   const nodesByLevel = nodes.reduce((acc, node) => {
-    const level = node.level; acc[level] = acc[level] || []; acc[level].push(node); return acc;
+    const level = node.level || 1;
+    if (!acc[level]) {
+      acc[level] = [];
+    }
+    acc[level].push(node);
+    return acc;
   }, {} as Record<number, Node[]>);
+
   const starterNodes = nodesByLevel[1] || [];
   const allLevels = Object.keys(nodesByLevel).map(Number).sort((a, b) => a - b);
   const starterLevel = 1;

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { supabase } from '../lib/supabase';
 import StoryTree from '../components/StoryTree';
+import TermsModal from '../components/TermsModal';
 
 interface Node {
   id: string;
@@ -19,6 +20,7 @@ interface Node {
 export default function Home() {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchNodes();
@@ -26,17 +28,14 @@ export default function Home() {
 
   const fetchNodes = async () => {
     try {
+      setLoading(true);
+      setError('');
+
       const { data, error } = await supabase
         .from('nodes')
-        .select(`
-          *,
-          author:author_id (
-            email,
-            username
-          )
-        `)
+        .select('*')
         .eq('status', 'approved')
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 
@@ -64,9 +63,7 @@ export default function Home() {
 
           return {
             ...node,
-            level,
-            author_email: node.author?.email,
-            author_username: node.author?.username
+            level
           };
         })
       );
@@ -74,6 +71,7 @@ export default function Home() {
       setNodes(nodesWithLevel);
     } catch (error) {
       console.error('Error fetching nodes:', error);
+      setError('Failed to load stories');
     } finally {
       setLoading(false);
     }
@@ -89,15 +87,26 @@ export default function Home() {
     );
   }
 
+  if (error) {
+    return (
+      <Layout>
+        <div className="text-red-600">{error}</div>
+      </Layout>
+    );
+  }
+
   return (
-    <Layout>
-      <div className="w-full">
+    <>
+      <TermsModal />
+      <Layout>
+        <div className="w-full">
           {nodes.length === 0 ? (
             <p className="text-gray-500 text-center">No stories yet. Be the first to start!</p>
           ) : (
-          <StoryTree nodes={nodes} />
+            <StoryTree nodes={nodes} />
           )}
-      </div>
-    </Layout>
+        </div>
+      </Layout>
+    </>
   );
 } 

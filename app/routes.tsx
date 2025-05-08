@@ -4,7 +4,7 @@ import Home from './routes/index';
 import Submit from './routes/submit';
 import Admin from './routes/admin';
 import Login from './routes/login';
-import ProtectedRoute from './components/ProtectedRoute';
+import AuthCheck from './components/AuthCheck';
 
 // Create router with routes
 export const router = createBrowserRouter([
@@ -14,19 +14,11 @@ export const router = createBrowserRouter([
   },
   {
     path: '/submit',
-    element: (
-      <ProtectedRoute>
-        <Submit />
-      </ProtectedRoute>
-    )
+    element: <AuthCheck><Submit /></AuthCheck>
   },
   {
     path: '/admin',
-    element: (
-      <ProtectedRoute>
-        <Admin />
-      </ProtectedRoute>
-    )
+    element: <AuthCheck><Admin /></AuthCheck>
   },
   {
     path: '/login',
