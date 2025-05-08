@@ -5,43 +5,31 @@ import Submit from './routes/submit';
 import Admin from './routes/admin';
 import Login from './routes/login';
 import ProtectedRoute from './components/ProtectedRoute';
-import { AuthProvider } from './contexts/AuthContext';
 
+// Create router with routes
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: (
-      <AuthProvider>
-        <Home />
-      </AuthProvider>
-    ),
+    element: <Home />
   },
   {
     path: '/submit',
     element: (
-      <AuthProvider>
-        <ProtectedRoute>
-          <Submit />
-        </ProtectedRoute>
-      </AuthProvider>
-    ),
+      <ProtectedRoute>
+        <Submit />
+      </ProtectedRoute>
+    )
   },
   {
     path: '/admin',
     element: (
-      <AuthProvider>
-        <ProtectedRoute>
-          <Admin />
-        </ProtectedRoute>
-      </AuthProvider>
-    ),
+      <ProtectedRoute>
+        <Admin />
+      </ProtectedRoute>
+    )
   },
   {
     path: '/login',
-    element: (
-      <AuthProvider>
-        <Login />
-      </AuthProvider>
-    ),
-  },
+    element: <Login />
+  }
 ]); 
