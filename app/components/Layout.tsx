@@ -1,6 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useRef, useEffect } from 'react';
+import AdminAccess from './AdminAccess';
+import Switch from './switch';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -39,15 +41,15 @@ export default function Layout({ children }: LayoutProps) {
   const displayAvatarUrl = avatarUrl || user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user?.email?.split('@')[0] || 'User'}&background=random`;
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
-      <nav className="bg-white shadow-lg">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col">
+      <nav className="bg-white dark:bg-gray-800 shadow-lg">
         <div className="w-full px-4">
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center pl-10">
                 <Link to="/" className="flex items-center space-x-3">
                   <img src="/assets/RS.png" alt="Round Square Logo" className="h-8 w-auto"/>
-                  <span className="text-xl font-bold text-gray-800">
+                  <span className="text-xl font-bold text-gray-800 dark:text-white">
                     Round Square Day Story Relay
                   </span>
                 </Link>
@@ -55,14 +57,14 @@ export default function Layout({ children }: LayoutProps) {
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 <Link
                   to="/"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                  className="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 hover:text-gray-700 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                 >
                   Home
                 </Link>
                 {user && (
                   <Link
                     to="/submit"
-                    className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                    className="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 hover:text-gray-700 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                   >
                     Submit Story
                   </Link>
@@ -70,38 +72,34 @@ export default function Layout({ children }: LayoutProps) {
               </div>
             </div>
             <div className="flex items-center pr-10">
-              {loading ? (
-                <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse"></div>
-              ) : user ? (
-                <div className="relative" ref={dropdownRef}>
-                  <img
-                    src={displayAvatarUrl}
-                    alt="Profile"
-                    className="w-10 h-10 rounded-full cursor-pointer border border-gray-300 object-cover"
-                    onClick={() => setDropdownOpen((open) => !open)}
-                  />
-                  {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50">
-                      <div className="px-4 py-2 text-sm text-gray-500 border-b">
-                        {user.email?.split('@')[0] || user.email}
-                      </div>
-                      <button
-                        onClick={async () => { await signOut(); setDropdownOpen(false); window.location.href = '/login'; }}
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
-                      >
-                        Logout
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Link
-                  to="/login"
-                  className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Login
-                </Link>
-              )}
+              <div className="flex items-center space-x-4">
+                <Switch />
+                {loading ? (
+                  <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
+                ) : user ? (
+                  <div className="flex items-center pl-6 space-x-3">
+                    <img
+                      src={displayAvatarUrl}
+                      alt="User avatar"
+                      className="h-10 w-10 rounded-full"
+                    />
+                    <button
+                      onClick={() => signOut()}
+                      className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white text-sm font-medium"
+                    >
+                      Sign Out
+                    </button>
+                    
+                  </div>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white text-sm font-medium"
+                  >
+                    Sign In
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         </div>
