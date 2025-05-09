@@ -73,7 +73,6 @@ export default function Layout({ children }: LayoutProps) {
             </div>
             <div className="flex items-center pr-10">
               <div className="flex items-center space-x-4">
-                <Switch />
                 {loading ? (
                   <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
                 ) : user ? (
@@ -85,7 +84,7 @@ export default function Layout({ children }: LayoutProps) {
                     />
                     <button
                       onClick={() => signOut()}
-                      className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white text-sm font-medium"
+                      className="text-gray-500 dark:text-gray-300 hover:text-gray-700 cursor-pointer dark:hover:text-white text-sm font-medium"
                     >
                       Sign Out
                     </button>
