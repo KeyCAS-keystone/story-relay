@@ -73,6 +73,7 @@ export default function Layout({ children }: LayoutProps) {
             </div>
             <div className="flex items-center pr-10">
               <div className="flex items-center space-x-4">
+                <Switch />
                 {loading ? (
                   <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
                 ) : user ? (

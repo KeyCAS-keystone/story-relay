@@ -10,44 +10,52 @@ const Switch = () => {
       }
       return window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
-    return false;
+    return false; // Default for SSR or if window is not available
   });
 
-  const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-    
-    if (newTheme) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+  // Effect to apply the theme to the <html> element when isDark changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const root = window.document.documentElement;
+    if (isDark) {
+      root.classList.add('dark');
     } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      root.classList.remove('dark');
+    }
+  }, [isDark]);
+
+  const toggleTheme = () => {
+    const newIsDark = !isDark;
+    setIsDark(newIsDark);
+    // Persist the user's manual choice in localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
     }
   };
 
-  // Listen for system theme changes
+  // Effect to listen for system theme changes
   useEffect(() => {
+    if (typeof window === 'undefined') return () => {};
+
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     const handleChange = (e: MediaQueryListEvent) => {
-      // Only update if user hasn't manually set a theme
-      if (!localStorage.getItem('theme')) {
-        const newTheme = e.matches;
-        setIsDark(newTheme);
-        if (newTheme) {
-          document.documentElement.classList.add('dark');
-          localStorage.setItem('theme', 'dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-          localStorage.setItem('theme', 'light');
-        }
+      // Only update if the user hasn't made a manual choice (i.e., no 'theme' in localStorage)
+      if (typeof window !== 'undefined' && !localStorage.getItem('theme')) {
+        setIsDark(e.matches);
       }
     };
 
+    // Set initial theme based on system preference IF no manual choice is stored
+    // This check is important if the component mounts after the initial page load logic
+    // and ensures consistency if localStorage is cleared or on first visit.
+    if (typeof window !== 'undefined' && !localStorage.getItem('theme')) {
+      setIsDark(mediaQuery.matches);
+    }
+
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+  }, []); // Empty dependency array ensures this runs once on mount and cleans up on unmount
 
   return (
     <div className="theme-switch-wrapper">

@@ -168,8 +168,8 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
     const isAnotherHovered = hoveredCardId !== null && !isHovered;
     
     return {
-      background: '#f3f4f6', border: '1.5px solid #d1d5db', color: '#1f2937',
-      boxShadow: '0 4px 12px 0 rgba(0,0,0,0.06)', borderRadius: '1rem', display: 'flex',
+      borderRadius: '1rem',
+      display: 'flex',
       flexDirection: 'column', 
       overflow: 'hidden',
       transition: 'all 0.2s ease-out', 
@@ -361,7 +361,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
                   key={node.id} 
                   ref={(el) => { if (el) cardRefs.current.set(node.id, el); }}
                   style={getCardStyle(node.id, 1, baseWidth)}
-                  className="mx-4"
+                  className="mx-4 bg-[#f3f4f6] border-[1.5px] border-[#d1d5db] text-[#1f2937] shadow-[0_4px_12px_0_rgba(0,0,0,0.06)] dark:bg-[#3B475C] dark:border-[#4b5563] dark:text-[#f3f4f6] dark:shadow-[0_4px_12px_0_rgba(0,0,0,0.2)]"
                   onMouseEnter={() => handleMouseEnter(node.id)}
                   onMouseLeave={handleMouseLeave}
                 >
@@ -400,7 +400,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
                   key={node.id} 
                   ref={(el) => { if (el) cardRefs.current.set(node.id, el); }}
                   style={getCardStyle(node.id, level, baseWidth)}
-                  className="mx-3 my-3"
+                  className="mx-3 my-3 bg-[#f3f4f6] border-[1.5px] border-[#d1d5db] text-[#1f2937] shadow-[0_4px_12px_0_rgba(0,0,0,0.06)] dark:bg-[#3B475C] dark:border-[1.5px] dark:border-[#4b5563] dark:text-[#f3f4f6] dark:shadow-[0_4px_12px_0_rgba(0,0,0,0.2)]"
                   onMouseEnter={() => handleMouseEnter(node.id)}
                   onMouseLeave={handleMouseLeave}
                 >
