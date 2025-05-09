@@ -74,13 +74,18 @@ export default function Login() {
 
         <div className="space-y-6">
           <div className="text-center">
+            <img
+              src="/assets/ks.png"
+              alt="Keystone Academy Logo"
+              className="mx-auto mb-4 w-48 h-auto"
+            />
             <p className="text-gray-600 dark:text-gray-300 mb-4">
               Please sign in with your Keystone Academy Microsoft account
             </p>
             <button
               onClick={handleMicrosoftLogin}
               disabled={loading}
-              className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#2F2F2F] hover:bg-[#1F1F1F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2F2F2F] disabled:opacity-50"
+              className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium cursor-pointer dark:text-black dark:bg-[#EAEBED] dark:hover:bg-[#E0E0E2] text-white bg-[#2F2F2F] hover:bg-[#1F1F1F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2F2F2F] disabled:opacity-50"
             >
               {loading ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>

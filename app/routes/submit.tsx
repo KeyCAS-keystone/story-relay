@@ -222,20 +222,20 @@ export default function Submit() {
       </div>
 
       {/* Fixed Footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg z-20">
+      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg z-20 dark:bg-[#1f2937] dark:border-[#4b5563] dark:text-[#f3f4f6] dark:shadow-[0_4px_12px_0_rgba(0,0,0,0.2)]">
         <div className="w-full py-4 px-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-6 pl-20">
               <div className="flex items-center space-x-2">
-                <p className="text-sm text-black">Hosted by Round Square Executive Team</p>
+                <p className="text-sm text-black dark:text-white">Hosted by Round Square Executive Team</p>
                 <img src="/assets/RS.png" alt="Round Square Logo" className="h-4 w-auto brightness-100"/>
               </div>
               <a href="https://keycas.cn" target="_blank" rel="noopener noreferrer" className="flex items-center text-black space-x-2 hover:opacity-80 transition-opacity">
-                <p className="text-sm">Powered by KeyCAS</p>
-                <img src="/assets/KeyCAS.svg" alt="KeyCAS Logo" className="h-4 w-auto brightness-0"/>
+                <p className="text-sm dark:text-white text-black">Powered by KeyCAS</p>
+                <img src="/assets/KeyCAS.svg" alt="KeyCAS Logo" className="h-4 w-auto brightness-0 dark:brightness-100"/>
               </a>
             </div>
-            <div className="pr-20">
+            <div className="pr-20 dark:text-white text-black">
               <AdminAccess />
             </div>
           </div>
