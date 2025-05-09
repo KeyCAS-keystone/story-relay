@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import { supabase } from '../lib/supabase';
 import StoryTree from '../components/StoryTree';
 import TermsModal from '../components/TermsModal';
+import Loader from '../components/Loader';
 
 interface Node {
   id: string;
@@ -81,7 +82,7 @@ export default function Home() {
     return (
       <Layout>
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+          <Loader />
         </div>
       </Layout>
     );

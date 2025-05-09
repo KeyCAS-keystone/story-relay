@@ -2,6 +2,7 @@ import { useState, useEffect, Fragment, useRef } from 'react';
 import Layout from '../components/Layout';
 import { supabase } from '../lib/supabase';
 import { Dialog, Transition } from '@headlessui/react';
+import Loader from '../components/Loader';
 
 interface Node {
   id: string;
@@ -260,7 +261,7 @@ export default function Admin() {
     return (
       <Layout>
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+          <Loader />
         </div>
       </Layout>
     );

@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useState, useRef, useEffect } from 'react';
 import AdminAccess from './AdminAccess';
 import Switch from './switch';
+import Loader from './Loader';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -115,7 +116,9 @@ export default function Layout({ children }: LayoutProps) {
                 <div className="flex items-center space-x-4">
                   <Switch />
                   {loading ? (
-                    <div className="w-10 h-10 rounded-full themed-bg-tertiary animate-pulse"></div>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center">
+                      <Loader />
+                    </div>
                   ) : user ? (
                     <div className="flex items-center pl-6 space-x-3">
                       <img
