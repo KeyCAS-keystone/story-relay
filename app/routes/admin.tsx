@@ -277,121 +277,120 @@ export default function Admin() {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8">Admin Panel</h1>
+      <div className="admin-page">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8">Admin Panel</h1>
 
-        {error && (
-          <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
-            <p className="text-red-700">{error}</p>
-          </div>
-        )}
-
-        <div className="space-y-12">
-          {allLevels.map((level, idx) => (
-            <div key={level} className="relative">
-              <div
-                className="flex flex-row items-start space-x-8 overflow-x-auto pb-4 px-4"
-                id={`level-row-${level}`}
-                ref={el => { rowRefs.current[level] = el; }}
-              >
-                {nodesByLevel[level].map((node) => (
-                  <div 
-                    key={node.id} 
-                    className={`bg-white shadow rounded-lg p-4 w-[400px] flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-indigo-400 transition ${
-                      node.status === 'pending' ? 'border-2 border-yellow-400' :
-                      node.status === 'rejected' ? 'border-2 border-red-400' :
-                      'border border-gray-200'
-                    }`}
-                    onClick={() => setSelectedNode(node)}
-                    data-node-id={node.id}
-                    data-parent-id={node.parent_id || ''}
-                  >
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-start">
-                  <div>
-                          <h3 className="text-lg font-medium text-gray-900">{node.summary}</h3>
-                          <p className="text-sm text-gray-500">
-                            By {node.author_username || node.author_email}
-                          </p>
-                        </div>
-                        <div className="text-sm">
-                          <span className={`px-2 py-1 rounded-full ${
-                            node.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                            node.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                            'bg-green-100 text-green-800'
-                          }`}>
-                            {node.status.charAt(0).toUpperCase() + node.status.slice(1)}
-                          </span>
-                        </div>
-                  </div>
-
-                      <div className="max-h-[100px] overflow-y-auto">
-                        <p className="text-gray-600 text-sm">{node.content}</p>
-                  </div>
-
-                      <div className="text-xs text-gray-500">
-                        {new Date(node.created_at).toLocaleString()}
-                  </div>
-
-                      {node.status === 'pending' && (
-                        <div className="flex justify-end space-x-4 pt-3 border-t">
-                    <button
-                            onClick={e => { e.stopPropagation(); handleReview(node.id, 'rejected'); }}
-                            className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                      Reject
-                    </button>
-                    <button
-                            onClick={e => { e.stopPropagation(); handleReview(node.id, 'approved'); }}
-                            className="px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                      Approve
-                    </button>
-                        </div>
-                      )}
-                  </div>
-                </div>
-                ))}
-              </div>
-              {/* 画线：只在不是最后一层时绘制 */}
-              {idx < allLevels.length - 1 && (
-                <svg className="absolute left-0 right-0" style={{top: '100%', height: 40, width: '100%', pointerEvents: 'none'}}>
-                  {nodesByLevel[level + 1].map((childNode) => {
-                    const parentIdx = nodesByLevel[level].findIndex(n => n.id === childNode.parent_id);
-                    const childIdx = nodesByLevel[level + 1].findIndex(n => n.id === childNode.id);
-                    if (parentIdx === -1) return null;
-                    // 获取当前层和下一层的 scrollLeft
-                    const parentScroll = rowRefs.current[level]?.scrollLeft || 0;
-                    const childScroll = rowRefs.current[level + 1]?.scrollLeft || 0;
-                    // 卡片宽和间距（与渲染一致）
-                    const cardWidth = 400;
-                    const gap = 32;
-                    const padding = 16;
-                    // 计算父子卡片中心的 x 坐标，减去 scrollLeft
-                    const parentX = cardWidth / 2 + parentIdx * (cardWidth + gap) + padding - parentScroll;
-                    const childX = cardWidth / 2 + childIdx * (cardWidth + gap) + padding - childScroll;
-                    return (
-                      <line
-                        key={childNode.id}
-                        x1={parentX}
-                        y1={0}
-                        x2={childX}
-                        y2={40}
-                        stroke="#a3a3a3"
-                        strokeWidth={2}
-                        markerEnd="url(#arrowhead)"
-                      />
-                    );
-                  })}
-                  <defs>
-                    <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto" markerUnits="strokeWidth">
-                      <path d="M0,0 L6,3 L0,6" fill="#a3a3a3" />
-                    </marker>
-                  </defs>
-                </svg>
-              )}
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+              <p className="text-red-700">{error}</p>
             </div>
-          ))}
+          )}
+
+          <div className="space-y-24">
+            {allLevels.map((level, idx) => (
+              <div key={level} className="relative">
+                <div
+                  className="flex flex-row items-stretch space-x-8 overflow-x-auto pb-4 px-4"
+                  id={`level-row-${level}`}
+                  ref={el => { rowRefs.current[level] = el; }}
+                >
+                  {nodesByLevel[level].map((node) => (
+                    <div 
+                      key={node.id} 
+                      className={`bg-white shadow rounded-lg p-4 w-[400px] h-full flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-indigo-400 transition ${
+                        node.status === 'pending' ? 'border-2 border-yellow-400' :
+                        node.status === 'rejected' ? 'border-2 border-red-400' :
+                        'border border-gray-200'
+                      }`}
+                      onClick={() => setSelectedNode(node)}
+                      data-node-id={node.id}
+                      data-parent-id={node.parent_id || ''}
+                    >
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="text-lg font-medium text-gray-900">{node.summary}</h3>
+                            <p className="text-sm text-gray-500">
+                              By {node.author_username || node.author_email}
+                            </p>
+                          </div>
+                          <div className="text-sm">
+                            <span className={`px-2 py-1 rounded-full ${
+                              node.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                              node.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                              'bg-green-100 text-green-800'
+                            }`}>
+                              {node.status.charAt(0).toUpperCase() + node.status.slice(1)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="max-h-[100px] overflow-y-auto">
+                          <p className="text-gray-600 text-sm">{node.content}</p>
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {new Date(node.created_at).toLocaleString()}
+                        </div>
+                        {node.status === 'pending' && (
+                          <div className="flex justify-end space-x-4 pt-3 border-t">
+                            <button
+                              onClick={e => { e.stopPropagation(); handleReview(node.id, 'rejected'); }}
+                              className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            >
+                              Reject
+                            </button>
+                            <button
+                              onClick={e => { e.stopPropagation(); handleReview(node.id, 'approved'); }}
+                              className="px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            >
+                              Approve
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* 画线：只在不是最后一层时绘制 */}
+                {idx < allLevels.length - 1 && (
+                  <svg className="absolute left-0 right-0" style={{top: '100%', height: 96, width: '100%', pointerEvents: 'none'}}>
+                    {nodesByLevel[level + 1].map((childNode) => {
+                      const parentIdx = nodesByLevel[level].findIndex(n => n.id === childNode.parent_id);
+                      const childIdx = nodesByLevel[level + 1].findIndex(n => n.id === childNode.id);
+                      if (parentIdx === -1) return null;
+                      // 获取当前层和下一层的 scrollLeft
+                      const parentScroll = rowRefs.current[level]?.scrollLeft || 0;
+                      const childScroll = rowRefs.current[level + 1]?.scrollLeft || 0;
+                      // 卡片宽和间距（与渲染一致）
+                      const cardWidth = 400;
+                      const gap = 32;
+                      const padding = 16;
+                      // 计算父子卡片中心的 x 坐标，减去 scrollLeft
+                      const parentX = cardWidth / 2 + parentIdx * (cardWidth + gap) + padding - parentScroll;
+                      const childX = cardWidth / 2 + childIdx * (cardWidth + gap) + padding - childScroll;
+                      return (
+                        <line
+                          key={childNode.id}
+                          x1={parentX}
+                          y1={8}
+                          x2={childX}
+                          y2={96}
+                          stroke="#a3a3a3"
+                          strokeWidth={2}
+                          markerEnd="url(#arrowhead)"
+                        />
+                      );
+                    })}
+                    <defs>
+                      <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L6,3 L0,6" fill="#a3a3a3" />
+                      </marker>
+                    </defs>
+                  </svg>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Modal for node details */}
@@ -411,32 +410,34 @@ export default function Admin() {
                   enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100"
                   leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95"
                 >
-                  <Dialog.Panel className="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-8 text-left shadow-xl transition-all">
-                    <Dialog.Title as="h3" className="text-2xl font-bold text-gray-900 mb-2">
+                  <Dialog.Panel 
+                    className="relative w-full max-w-lg transform overflow-hidden rounded-2xl themed-text-primary bg-white p-8 text-left shadow-xl transition-all"
+                  >
+                    <Dialog.Title as="h3" className="text-2xl font-bold themed-text-primary text-gray-900 mb-2">
                       {selectedNode?.summary}
                     </Dialog.Title>
-                    <div className="mb-4 text-gray-700">
+                    <div className="mb-4 text-gray-700 themed-text-primary">
                       <span className="font-semibold">Content: </span>
                       <div className="whitespace-pre-line mt-1 mb-2 p-2 bg-gray-50 rounded text-gray-800 max-h-60 overflow-y-auto">
                         {selectedNode?.content}
                       </div>
                     </div>
-                    <div className="mb-2 text-sm text-gray-600">
+                    <div className="mb-2 text-sm themed-text-primary">
                       <span className="font-semibold">Author: </span> {selectedNode?.author_username || selectedNode?.author_email}
                     </div>
-                    <div className="mb-2 text-sm text-gray-600">
+                    <div className="mb-2 text-sm themed-text-primary">
                       <span className="font-semibold">Created At: </span> {selectedNode && new Date(selectedNode.created_at).toLocaleString()}
                     </div>
-                    <div className="mb-2 text-sm text-gray-600">
+                    <div className="mb-2 text-sm themed-text-primary">
                       <span className="font-semibold">Status: </span> {selectedNode && selectedNode.status.charAt(0).toUpperCase() + selectedNode.status.slice(1)}
                     </div>
-                    <div className="mb-2 text-sm text-gray-600">
+                    <div className="mb-2 text-sm themed-text-primary">
                       <span className="font-semibold">Node ID: </span> {selectedNode?.id}
                     </div>
-                    <div className="mb-2 text-sm text-gray-600">
+                    <div className="mb-2 text-sm themed-text-primary">
                       <span className="font-semibold">Parent ID: </span> {selectedNode?.parent_id || 'None'}
                     </div>
-                    <div className="mb-2 text-sm text-gray-600">
+                    <div className="mb-2 text-sm themed-text-primary">
                       <span className="font-semibold">Level: </span> {selectedNode?.level}
                     </div>
                     <div className="flex justify-end mt-6">

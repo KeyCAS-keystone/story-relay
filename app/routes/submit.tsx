@@ -148,7 +148,7 @@ export default function Submit() {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto pb-20">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8">Submit Your Story</h1>
+        <h1 className="text-3xl font-bold themed-heading mb-8">Submit Your Story</h1>
         
         {error && (
           <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
@@ -164,14 +164,14 @@ export default function Submit() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="parent" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
+            <label htmlFor="parent" className="block text-sm font-medium themed-label">
               Continue from:
             </label>
             <select
               id="parent"
               value={selectedNodeId}
               onChange={(e) => setSelectedNodeId(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white themed-input"
               required
             >
               <option value="">Select a story to continue from</option>
@@ -184,7 +184,7 @@ export default function Submit() {
           </div>
 
           <div>
-            <label htmlFor="content" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
+            <label htmlFor="content" className="block text-sm font-medium themed-label">
               Your Story (1-5 sentences)
             </label>
             <textarea
@@ -192,13 +192,13 @@ export default function Submit() {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={4}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white themed-input"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="summary" className="block text-sm font-medium text-gray-600 dark:text-gray-300">
+            <label htmlFor="summary" className="block text-sm font-medium themed-label">
               Summary
             </label>
             <input
@@ -206,7 +206,7 @@ export default function Submit() {
               id="summary"
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white themed-input"
               required
             />
           </div>
@@ -214,7 +214,7 @@ export default function Submit() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium themed-button disabled:opacity-50"
           >
             {loading ? 'Submitting...' : 'Submit Story'}
           </button>
@@ -222,20 +222,20 @@ export default function Submit() {
       </div>
 
       {/* Fixed Footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg z-20 dark:bg-[#1f2937] dark:border-[#4b5563] dark:text-[#f3f4f6] dark:shadow-[0_4px_12px_0_rgba(0,0,0,0.2)]">
+      <div className="fixed bottom-0 left-0 right-0 shadow-lg z-20 themed-footer">
         <div className="w-full py-4 px-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-6 pl-20">
               <div className="flex items-center space-x-2">
-                <p className="text-sm text-black dark:text-white">Hosted by Round Square Executive Team</p>
+                <p className="text-sm themed-text-primary">Hosted by Round Square Executive Team</p>
                 <img src="/assets/RS.png" alt="Round Square Logo" className="h-4 w-auto brightness-100"/>
               </div>
-              <a href="https://keycas.cn" target="_blank" rel="noopener noreferrer" className="flex items-center text-black space-x-2 hover:opacity-80 transition-opacity">
-                <p className="text-sm dark:text-white text-black">Powered by KeyCAS</p>
-                <img src="/assets/KeyCAS.svg" alt="KeyCAS Logo" className="h-4 w-auto brightness-0 dark:brightness-100"/>
+              <a href="https://keycas.cn" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+                <p className="text-sm themed-text-primary">Powered by KeyCAS</p>
+                <img src="/assets/KeyCAS.svg" alt="KeyCAS Logo" className="h-4 w-auto themed-icon-brightness"/>
               </a>
             </div>
-            <div className="pr-20 dark:text-white text-black">
+            <div className="pr-20 themed-text-primary">
               <AdminAccess />
             </div>
           </div>

@@ -8,7 +8,7 @@
 /* 默认（浅色）样式 */
 html,
 body {
-  @apply bg-white;
+  @apply bg-gray-100;
   color-scheme: light !important; /* 强制浅色模式的 color-scheme */
 }
 
@@ -16,6 +16,7 @@ body {
 html.dark,
 html.dark body {
   @apply bg-gray-950;
+  background-color: var(--background-dark) !important;
   color-scheme: dark !important; /* 强制深色模式的 color-scheme */
 }
 
@@ -23,7 +24,420 @@ html.dark body {
 @media (prefers-color-scheme: dark) {
   html:not(.dark),
   html:not(.dark) body {
-    @apply !bg-white; /* 感叹号放在样式类前面，而不是作为单独的类 */
+    @apply !bg-gray-100; /* 感叹号放在样式类前面，而不是作为单独的类 */
     color-scheme: light !important; /* 即使系统是深色，也强制浅色模式的 color-scheme */
   }
+}
+
+/* 添加自定义CSS变量，允许组件通过这些变量获取主题颜色 */
+:root {
+  --card-bg: #f3f4f6; /* 浅色模式卡片背景 */
+  --card-border: #d1d5db; /* 浅色模式卡片边框 */
+  --card-text: #1f2937; /* 浅色模式卡片文本 */
+  --login-bg: #f3f4f6; /* 浅色模式登录背景 */
+  --login-text: #1f2937; /* 浅色模式登录文本 */
+  --nav-text: #1f2937; /* 浅色模式导航栏文本 */
+  --footer-text: #1f2937; /* 浅色模式页脚文本 */
+  --nav-bg: #ffffff; /* 浅色模式导航栏背景 - 纯白色 */
+  --footer-bg: #ffffff; /* 浅色模式页脚背景 - 纯白色 */
+  --button-bg: #1f2937; /* 浅色模式按钮背景 - 黑色 */
+  --button-text: #ffffff; /* 浅色模式按钮文本 - 白色 */
+  --heading-text: #1f2937; /* 浅色模式标题文本 */
+  
+  /* 通用主题颜色 */
+  --text-primary: #1f2937; /* 正常文本颜色 */
+  --text-secondary: #4b5563; /* 次要文本颜色 */
+  --text-tertiary: #6b7280; /* 第三级文本颜色 */
+  --bg-primary: #f3f4f6; /* 主要背景色 */
+  --bg-secondary: #ffffff; /* 次要背景色 */
+  --bg-tertiary: #e5e7eb; /* 第三级背景色 */
+  --border-primary: #d1d5db; /* 主要边框颜色 */
+  --border-secondary: #9ca3af; /* 次要边框颜色 */
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 243, 244, 246;
+  --background-end-rgb: 243, 244, 246;
+  --background-dark: #030711;
+}
+
+/* 深色模式下的CSS变量 */
+html.dark {
+  --card-bg: #3B475C; /* 深色模式卡片背景 - 更新为客户要求的颜色 */
+  --card-border: #4b5563; /* 深色模式卡片边框 */
+  --card-text: #f3f4f6; /* 深色模式卡片文本 */
+  --login-bg: #030711; /* 登录卡片背景和主背景一致 */
+  --login-text: #f3f4f6; /* 深色模式登录文本 */
+  --nav-text: #f3f4f6; /* 深色模式导航栏文本 */
+  --footer-text: #f3f4f6; /* 深色模式页脚文本 */
+  --nav-bg: #030711; /* 深色模式导航栏背景 - 改为与主背景一致 */
+  --footer-bg: #030711; /* 深色模式页脚背景 - 改为与主背景一致 */
+  --button-bg: #e5e7eb; /* 深色模式按钮背景 - 浅色 */
+  --button-text: #1f2937; /* 深色模式按钮文本 - 深色 */
+  --heading-text: #f3f4f6; /* 深色模式标题文本 */
+  
+  /* 通用主题颜色 - 深色模式 */
+  --text-primary: #f3f4f6; /* 正常文本颜色 */
+  --text-secondary: #d1d5db; /* 次要文本颜色 */
+  --text-tertiary: #9ca3af; /* 第三级文本颜色 */
+  --bg-primary: #030711; /* 主要背景色 - 改为与主背景一致 */
+  --bg-secondary: #030711; /* 次要背景色 - 改为与主背景一致 */
+  --bg-tertiary: #374151; /* 第三级背景色 */
+  --border-primary: #4b5563; /* 主要边框颜色 */
+  --border-secondary: #6b7280; /* 次要边框颜色 */
+  --icon-brightness: 100;
+}
+
+html:not(.dark) {
+  --icon-brightness: 0;
+}
+
+/* data-theme属性选择器，作为.dark类的备选方案 */
+html[data-theme="dark"] {
+  @apply bg-gray-950;
+  --card-bg: #3B475C;
+  --card-border: #4b5563;
+  --card-text: #f3f4f6;
+  --login-bg: #1f2937;
+  --login-text: #f3f4f6;
+  --nav-text: #f3f4f6;
+  --footer-text: #f3f4f6;
+  --nav-bg: #1f2937;
+  --footer-bg: #1f2937;
+  --button-bg: #e5e7eb;
+  --button-text: #1f2937;
+  --heading-text: #f3f4f6;
+  
+  /* 通用主题颜色 - 深色模式 */
+  --text-primary: #f3f4f6;
+  --text-secondary: #d1d5db;
+  --text-tertiary: #9ca3af;
+  --bg-primary: #1f2937;
+  --bg-secondary: #111827;
+  --bg-tertiary: #374151;
+  --border-primary: #4b5563;
+  --border-secondary: #6b7280;
+}
+
+/* 强制覆盖卡片组件样式 */
+.dark [class*="bg-gray-100"],
+.dark [class*="bg-white"],
+html[data-theme="dark"] [class*="bg-gray-100"],
+html[data-theme="dark"] [class*="bg-white"] {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--card-text) !important;
+}
+
+/* 直接使用CSS变量的卡片类 */
+.card-component {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+  color: var(--card-text);
+}
+
+/* 登录页面元素的强制覆盖 */
+.dark [class*="login"],
+html[data-theme="dark"] [class*="login"] {
+  background-color: var(--login-bg) !important;
+  color: var(--login-text) !important;
+}
+
+/* 登录页面标题和文本 */
+h1[class*="login"], h2[class*="login"], h3[class*="login"], 
+.login-heading, .login-title, [class*="login-heading"], [class*="login-title"] {
+  color: var(--heading-text) !important;
+}
+
+/* 登录页面按钮 */
+button[class*="login"], .login-button, [class*="login-button"] {
+  background-color: var(--button-bg) !important;
+  color: var(--button-text) !important;
+}
+
+/* 添加导航栏和页脚的强制覆盖 */
+nav, .nav, [class*="nav"] {
+  background-color: var(--nav-bg) !important;
+  color: var(--nav-text) !important;
+}
+
+nav *, .nav *, [class*="nav"] * {
+  color: var(--nav-text) !important;
+}
+
+footer, .footer, [class*="footer"] {
+  background-color: var(--footer-bg) !important;
+  color: var(--footer-text) !important;
+}
+
+footer *, .footer *, [class*="footer"] * {
+  color: var(--footer-text) !important;
+}
+
+/* 覆盖登录页面所有组件 */
+.login-page, [class*="login-page"], 
+.login-form, [class*="login-form"],
+.login-container, [class*="login-container"],
+.login-component, [class*="login-component"] {
+  background-color: var(--login-bg) !important;
+  color: var(--login-text) !important;
+}
+
+.login-page *, [class*="login-page"] *, 
+.login-form *, [class*="login-form"] *,
+.login-container *, [class*="login-container"] *,
+.login-component *, [class*="login-component"] * {
+  color: var(--login-text) !important;
+}
+
+/* 针对系统主题的明确覆盖规则 */
+@media (prefers-color-scheme: dark) {
+  html:not(.dark) nav, 
+  html:not(.dark) .nav, 
+  html:not(.dark) [class*="nav"],
+  html:not(.dark) footer, 
+  html:not(.dark) .footer, 
+  html:not(.dark) [class*="footer"] {
+    background-color: var(--nav-bg) !important;
+    color: var(--nav-text) !important;
+  }
+
+  html:not(.dark) nav *, 
+  html:not(.dark) .nav *, 
+  html:not(.dark) [class*="nav"] *,
+  html:not(.dark) footer *, 
+  html:not(.dark) .footer *, 
+  html:not(.dark) [class*="footer"] * {
+    color: var(--nav-text) !important;
+  }
+}
+
+/* 应用通用主题样式的类 */
+.themed-text-primary {
+  color: var(--text-primary) !important;
+}
+
+.themed-text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.themed-text-tertiary {
+  color: var(--text-tertiary) !important;
+}
+
+.themed-bg-primary {
+  background-color: var(--bg-primary) !important;
+}
+
+.themed-bg-secondary {
+  background-color: var(--bg-secondary) !important;
+}
+
+.themed-bg-tertiary {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.themed-border-primary {
+  border-color: var(--border-primary) !important;
+}
+
+.themed-heading {
+  color: var(--heading-text) !important;
+}
+
+/* 主题化表单元素 */
+.themed-input {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-primary) !important;
+}
+
+.themed-label {
+  color: var(--text-secondary) !important;
+}
+
+.themed-button {
+  background-color: var(--button-bg) !important;
+  color: var(--button-text) !important;
+  border-color: var(--button-bg) !important;
+  transition: opacity 0.2s ease-in-out !important;
+}
+
+.themed-button:hover {
+  opacity: 0.9 !important;
+}
+
+/* 针对页脚特定样式 */
+.themed-footer {
+  background-color: var(--footer-bg) !important;
+  color: var(--footer-text) !important;
+}
+
+/* 专门针对按钮内文本的强制样式 */
+html:not(.dark) .themed-button,
+html:not(.dark) button[class*="themed-button"],
+html:not(.dark) [class*="login"] button,
+html[data-theme="light"] .themed-button,
+html[data-theme="light"] button[class*="themed-button"],
+html[data-theme="light"] [class*="login"] button,
+html:not(.dark) [type="submit"],
+html[data-theme="light"] [type="submit"] {
+  background-color: #1f2937 !important;
+  color: #ffffff !important;
+  border-color: #1f2937 !important;
+}
+
+html:not(.dark) .themed-button *,
+html:not(.dark) button[class*="themed-button"] *,
+html:not(.dark) [class*="login"] button *,
+html[data-theme="light"] .themed-button *,
+html[data-theme="light"] button[class*="themed-button"] *,
+html[data-theme="light"] [class*="login"] button *,
+html:not(.dark) [type="submit"] *,
+html[data-theme="light"] [type="submit"] * {
+  color: #ffffff !important;
+}
+
+html.dark .themed-button,
+html.dark button[class*="themed-button"],
+html.dark [class*="login"] button,
+html[data-theme="dark"] .themed-button,
+html[data-theme="dark"] button[class*="themed-button"],
+html[data-theme="dark"] [class*="login"] button,
+html.dark [type="submit"],
+html[data-theme="dark"] [type="submit"] {
+  background-color: #e5e7eb !important;
+  color: #1f2937 !important;
+  border-color: #e5e7eb !important;
+}
+
+html.dark .themed-button *,
+html.dark button[class*="themed-button"] *,
+html.dark [class*="login"] button *,
+html[data-theme="dark"] .themed-button *,
+html[data-theme="dark"] button[class*="themed-button"] *,
+html[data-theme="dark"] [class*="login"] button *,
+html.dark [type="submit"] *,
+html[data-theme="dark"] [type="submit"] * {
+  color: #1f2937 !important;
+}
+
+/* 键盘图标亮度调整 */
+.themed-icon-brightness {
+  filter: brightness(var(--icon-brightness, 0));
+}
+
+/* 强制覆盖导航栏和页脚的背景色 */
+.themed-bg-secondary {
+  background-color: var(--nav-bg) !important;
+}
+
+.themed-footer {
+  background-color: var(--footer-bg) !important;
+}
+
+/* 添加强制CSS规则防止被覆盖 */
+html[data-theme="light"] nav,
+html:not(.dark) nav,
+body:not(.dark) nav,
+html[data-theme="light"] .themed-bg-secondary,
+html:not(.dark) .themed-bg-secondary,
+body:not(.dark) .themed-bg-secondary {
+  background-color: var(--nav-bg) !important;
+}
+
+html[data-theme="light"] footer,
+html:not(.dark) footer,
+body:not(.dark) footer,
+html[data-theme="light"] .themed-footer,
+html:not(.dark) .themed-footer,
+body:not(.dark) .themed-footer {
+  background-color: var(--footer-bg) !important;
+}
+
+html.dark .login-component,
+.login-component {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.terms-modal-dark,
+html.dark .terms-modal-dark,
+html.dark .terms-modal-dark * {
+  color: #f3f4f6 !important;
+  background-color: #1F2936 !important;
+}
+
+html.dark .terms-modal-dark h2,
+html.dark .terms-modal-dark h3 {
+  color: #fff !important;
+}
+
+html.dark .terms-modal-dark ul,
+html.dark .terms-modal-dark ol,
+html.dark .terms-modal-dark p,
+html.dark .terms-modal-dark label {
+  color: #e5e7eb !important;
+}
+
+html.dark .terms-modal-dark .bg-white\/95 {
+  background-color: #23272f !important;
+}
+
+html.dark .admin-page, html.dark .admin-page * {
+  color: #f3f4f6 !important;
+}
+
+html.dark .admin-page .bg-yellow-100,
+html.dark .admin-page .bg-green-100,
+html.dark .admin-page .bg-red-100 {
+  color: #222 !important;
+}
+
+html.dark .admin-page .DialogPanel-dark,
+html.dark .admin-page .headlessui-dialog-panel--r12,
+html.dark .admin-page [class*="headlessui-dialog-panel"],
+html.dark .admin-page .DialogPanel-dark *,
+html.dark .admin-page .headlessui-dialog-panel--r12 *,
+html.dark .admin-page [class*="headlessui-dialog-panel"] *,
+html.dark .admin-page .DialogPanel-dark h3,
+html.dark .admin-page .DialogPanel-dark p,
+html.dark .admin-page .DialogPanel-dark span,
+html.dark .admin-page .DialogPanel-dark div {
+  color: #fff !important;
+}
+
+html.dark .admin-page .DialogPanel-dark *,
+html.dark .admin-page .DialogPanel-dark,
+html.dark .admin-page [class*="headlessui-dialog-panel"],
+html.dark .admin-page [class*="headlessui-dialog-panel"] * {
+  color: #fff !important;
+  --tw-text-opacity: 1 !important;
+}
+
+html.dark .admin-page .DialogPanel-dark .text-gray-900,
+html.dark .admin-page .DialogPanel-dark .text-gray-800,
+html.dark .admin-page .DialogPanel-dark .text-gray-700,
+html.dark .admin-page .DialogPanel-dark .text-gray-600,
+html.dark .admin-page .DialogPanel-dark .text-gray-500,
+html.dark .admin-page .DialogPanel-dark .text-gray-400,
+html.dark .admin-page .DialogPanel-dark .text-gray-300,
+html.dark .admin-page .DialogPanel-dark .text-gray-200,
+html.dark .admin-page .DialogPanel-dark .text-gray-100,
+html.dark .admin-page [class*="headlessui-dialog-panel"] .text-gray-900,
+html.dark .admin-page [class*="headlessui-dialog-panel"] .text-gray-800,
+html.dark .admin-page [class*="headlessui-dialog-panel"] .text-gray-700,
+html.dark .admin-page [class*="headlessui-dialog-panel"] .text-gray-600,
+html.dark .admin-page [class*="headlessui-dialog-panel"] .text-gray-500,
+html.dark .admin-page [class*="headlessui-dialog-panel"] .text-gray-400,
+html.dark .admin-page [class*="headlessui-dialog-panel"] .text-gray-300,
+html.dark .admin-page [class*="headlessui-dialog-panel"] .text-gray-200,
+html.dark .admin-page [class*="headlessui-dialog-panel"] .text-gray-100 {
+  color: #fff !important;
+}
+
+html.dark .admin-page .DialogPanel-dark .bg-gray-50,
+html.dark .admin-page .DialogPanel-dark .bg-white,
+html.dark .admin-page [class*="headlessui-dialog-panel"] .bg-gray-50,
+html.dark .admin-page [class*="headlessui-dialog-panel"] .bg-white {
+  background-color: #23272f !important;
+  color: #fff !important;
 }

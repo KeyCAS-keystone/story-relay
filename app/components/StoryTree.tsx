@@ -361,7 +361,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
                   key={node.id} 
                   ref={(el) => { if (el) cardRefs.current.set(node.id, el); }}
                   style={getCardStyle(node.id, 1, baseWidth)}
-                  className="mx-4 bg-[#f3f4f6] border-[1.5px] border-[#d1d5db] text-[#1f2937] shadow-[0_4px_12px_0_rgba(0,0,0,0.06)] dark:bg-[#3B475C] dark:border-[#4b5563] dark:text-[#f3f4f6] dark:shadow-[0_4px_12px_0_rgba(0,0,0,0.2)]"
+                  className="mx-4 shadow-lg card-component"
                   onMouseEnter={() => handleMouseEnter(node.id)}
                   onMouseLeave={handleMouseLeave}
                 >
@@ -400,7 +400,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
                   key={node.id} 
                   ref={(el) => { if (el) cardRefs.current.set(node.id, el); }}
                   style={getCardStyle(node.id, level, baseWidth)}
-                  className="mx-3 my-3 bg-[#f3f4f6] border-[1.5px] border-[#d1d5db] text-[#1f2937] shadow-[0_4px_12px_0_rgba(0,0,0,0.06)] dark:bg-[#3B475C] dark:border-[1.5px] dark:border-[#4b5563] dark:text-[#f3f4f6] dark:shadow-[0_4px_12px_0_rgba(0,0,0,0.2)]"
+                  className="mx-3 my-3 shadow-lg card-component"
                   onMouseEnter={() => handleMouseEnter(node.id)}
                   onMouseLeave={handleMouseLeave}
                 >
@@ -431,7 +431,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
         ))}
         {/* Footer as part of the scrollable content */}
         <div 
-          className="w-full bg-white shadow-lg transition-opacity duration-300 dark:bg-[#1f2937] dark:border-[#4b5563] dark:text-[#f3f4f6] dark:shadow-[0_4px_12px_0_rgba(0,0,0,0.2)]" 
+          className="w-full shadow-lg transition-opacity duration-300 themed-footer" 
           style={{ 
             position: 'fixed', 
             bottom: 0, 
@@ -446,15 +446,15 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-6 pl-20">
                 <div className="flex items-center space-x-2">
-                  <p className="text-sm dark:text-white text-black">Hosted by Round Square Executive Team</p>
+                  <p className="text-sm themed-text-primary">Hosted by Round Square Executive Team</p>
                   <img src="/assets/RS.png" alt="Round Square Logo" className="h-4 w-auto brightness-100"/>
                 </div>
-                <a href="https://keycas.cn" target="_blank" rel="noopener noreferrer" className="flex items-center text-black space-x-2 hover:opacity-80 transition-opacity">
-                  <p className="text-sm dark:text-white text-black">Powered by KeyCAS</p>
-                  <img src="/assets/KeyCAS.svg" alt="KeyCAS Logo" className="h-4 w-auto brightness-0 dark:brightness-100"/>
+                <a href="https://keycas.cn" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+                  <p className="text-sm themed-text-primary">Powered by KeyCAS</p>
+                  <img src="/assets/KeyCAS.svg" alt="KeyCAS Logo" className="h-4 w-auto themed-icon-brightness"/>
                 </a>
               </div>
-              <div className="pr-20 dark:text-white text-black">
+              <div className="pr-20 themed-text-primary">
                 <AdminAccess />
               </div>
             </div>

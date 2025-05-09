@@ -27,48 +27,231 @@ const Switch = () => {
     
     // 设置 meta 标签的 content 属性
     metaTag.setAttribute('content', dark ? 'dark' : 'light');
+    
+    // 添加一个额外的渲染提示meta标签
+    let renderHintTag = document.querySelector('meta[name="theme-mode"]');
+    if (!renderHintTag) {
+      renderHintTag = document.createElement('meta');
+      renderHintTag.setAttribute('name', 'theme-mode');
+      document.head.appendChild(renderHintTag);
+    }
+    renderHintTag.setAttribute('content', dark ? 'dark' : 'light');
+    
+    // 添加一个强制主题meta标签，防止浏览器自动适应系统主题
+    let forceThemeTag = document.querySelector('meta[name="theme-color-scheme"]');
+    if (!forceThemeTag) {
+      forceThemeTag = document.createElement('meta');
+      forceThemeTag.setAttribute('name', 'theme-color-scheme');
+      document.head.appendChild(forceThemeTag);
+    }
+    forceThemeTag.setAttribute('content', dark ? 'dark' : 'light');
   };
 
-  // 应用主题的方法 - 使用直接样式设置
+  // 应用主题的方法 - 使用直接样式设置和多种属性
   const applyTheme = (dark: boolean) => {
     const root = window.document.documentElement;
     
     if (dark) {
+      // 使用多种方式标记深色模式
       root.classList.add('dark');
+      root.setAttribute('data-theme', 'dark');
+      root.setAttribute('data-mode', 'dark');
+      root.setAttribute('data-color-mode', 'dark');
+      
       // 直接设置样式属性覆盖任何 CSS
       root.style.setProperty('color-scheme', 'dark', 'important');
-      root.style.setProperty('background-color', 'rgb(3, 7, 18)', 'important'); // bg-gray-950
-      document.body.style.setProperty('background-color', 'rgb(3, 7, 18)', 'important');
+      root.style.setProperty('background-color', 'rgb(3, 7, 17)', 'important'); // bg-gray-950
+      document.body.style.setProperty('background-color', 'rgb(3, 7, 17)', 'important');
+      
       // 添加 CSS 变量覆盖
       root.style.setProperty('--foreground-rgb', '255, 255, 255', 'important');
-      root.style.setProperty('--background-start-rgb', '3, 7, 18', 'important');
-      root.style.setProperty('--background-end-rgb', '3, 7, 18', 'important');
+      root.style.setProperty('--background-start-rgb', '3, 7, 17', 'important');
+      root.style.setProperty('--background-end-rgb', '3, 7, 17', 'important');
+      
+      // 添加更多Tailwind相关的CSS变量
+      root.style.setProperty('--tw-text-opacity', '1', 'important');
+      root.style.setProperty('--tw-bg-opacity', '1', 'important');
+      
+      // 组件颜色覆盖
+      root.style.setProperty('--card-bg', 'rgb(59, 71, 92)', 'important'); // dark:bg-gray-800 (#3B475C)
+      root.style.setProperty('--card-border', 'rgb(75, 85, 99)', 'important'); // dark:border-gray-700
+      root.style.setProperty('--card-text', 'rgb(243, 244, 246)', 'important'); // dark:text-gray-100
+      
+      // 登录页面相关颜色
+      root.style.setProperty('--login-bg', 'rgb(3, 7, 17)', 'important');
+      root.style.setProperty('--login-text', 'rgb(243, 244, 246)', 'important');
+      root.style.setProperty('--heading-text', 'rgb(243, 244, 246)', 'important');
+      root.style.setProperty('--button-bg', 'rgb(229, 231, 235)', 'important'); // 浅灰色按钮
+      root.style.setProperty('--button-text', 'rgb(31, 41, 55)', 'important'); // 深色文字
+      
+      // 导航栏和页脚相关颜色
+      root.style.setProperty('--nav-text', 'rgb(243, 244, 246)', 'important');
+      root.style.setProperty('--footer-text', 'rgb(243, 244, 246)', 'important');
+      root.style.setProperty('--nav-bg', 'rgb(3, 7, 17)', 'important');
+      root.style.setProperty('--footer-bg', 'rgb(3, 7, 17)', 'important');
       
       // 更新 meta 标签
       updateMetaTag(true);
     } else {
+      // 使用多种方式标记浅色模式
       root.classList.remove('dark');
+      root.setAttribute('data-theme', 'light');
+      root.setAttribute('data-mode', 'light');
+      root.setAttribute('data-color-mode', 'light');
+      
       // 直接设置样式属性覆盖任何 CSS
       root.style.setProperty('color-scheme', 'light', 'important');
-      root.style.setProperty('background-color', 'white', 'important');
-      document.body.style.setProperty('background-color', 'white', 'important');
+      root.style.setProperty('background-color', 'rgb(243, 244, 246)', 'important'); // bg-gray-100
+      document.body.style.setProperty('background-color', 'rgb(243, 244, 246)', 'important');
+      
       // 添加 CSS 变量覆盖
       root.style.setProperty('--foreground-rgb', '0, 0, 0', 'important');
-      root.style.setProperty('--background-start-rgb', '255, 255, 255', 'important');
-      root.style.setProperty('--background-end-rgb', '255, 255, 255', 'important');
+      root.style.setProperty('--background-start-rgb', '243, 244, 246', 'important');
+      root.style.setProperty('--background-end-rgb', '243, 244, 246', 'important');
+      
+      // 添加更多Tailwind相关的CSS变量
+      root.style.setProperty('--tw-text-opacity', '1', 'important');
+      root.style.setProperty('--tw-bg-opacity', '1', 'important');
+      
+      // 组件颜色覆盖
+      root.style.setProperty('--card-bg', 'rgb(243, 244, 246)', 'important'); // bg-gray-100
+      root.style.setProperty('--card-border', 'rgb(209, 213, 219)', 'important'); // border-gray-300
+      root.style.setProperty('--card-text', 'rgb(31, 41, 55)', 'important'); // text-gray-800
+      
+      // 登录页面相关颜色
+      root.style.setProperty('--login-bg', 'rgb(243, 244, 246)', 'important');
+      root.style.setProperty('--login-text', 'rgb(31, 41, 55)', 'important');
+      root.style.setProperty('--heading-text', 'rgb(31, 41, 55)', 'important');
+      root.style.setProperty('--button-bg', 'rgb(31, 41, 55)', 'important'); // 黑色按钮
+      root.style.setProperty('--button-text', 'rgb(255, 255, 255)', 'important'); // 白色文字
+      
+      // 导航栏和页脚相关颜色
+      root.style.setProperty('--nav-text', 'rgb(31, 41, 55)', 'important');
+      root.style.setProperty('--footer-text', 'rgb(31, 41, 55)', 'important');
+      root.style.setProperty('--nav-bg', 'rgb(255, 255, 255)', 'important');
+      root.style.setProperty('--footer-bg', 'rgb(255, 255, 255)', 'important');
       
       // 更新 meta 标签
       updateMetaTag(false);
     }
     
-    // 强制应用样式，触发重绘
+    // 直接应用样式到导航栏和页脚
+    applyThemeToElements('nav, .nav, [class*="nav"]', dark);
+    applyThemeToElements('footer, .footer, [class*="footer"]', dark);
+    applyThemeToElements('.login-page, [class*="login-page"], .login-form, .login-container', dark);
+    
+    // 处理登录页面特定元素
+    const loginHeadings = document.querySelectorAll('h1[class*="login"], h2[class*="login"], h3[class*="login"], .login-heading, .login-title, [class*="login-heading"], [class*="login-title"]');
+    loginHeadings.forEach(el => {
+      (el as HTMLElement).style.setProperty('color', dark ? 'rgb(243, 244, 246)' : 'rgb(31, 41, 55)', 'important');
+    });
+    
+    // 强化按钮处理，确保文本颜色不被覆盖
+    const themedButtons = document.querySelectorAll('.themed-button, button[class*="themed-button"], [class*="login"] button, [type="submit"]');
+    themedButtons.forEach(el => {
+      if (dark) {
+        (el as HTMLElement).style.setProperty('background-color', 'rgb(229, 231, 235)', 'important');
+        (el as HTMLElement).style.setProperty('color', 'rgb(31, 41, 55)', 'important');
+        (el as HTMLElement).style.setProperty('border-color', 'rgb(229, 231, 235)', 'important');
+      } else {
+        (el as HTMLElement).style.setProperty('background-color', 'rgb(31, 41, 55)', 'important');
+        (el as HTMLElement).style.setProperty('color', 'rgb(255, 255, 255)', 'important');
+        (el as HTMLElement).style.setProperty('border-color', 'rgb(31, 41, 55)', 'important');
+      }
+      
+      // 处理按钮内的所有文本元素
+      const buttonTextElements = el.querySelectorAll('*');
+      buttonTextElements.forEach(text => {
+        if (dark) {
+          (text as HTMLElement).style.setProperty('color', 'rgb(31, 41, 55)', 'important');
+        } else {
+          (text as HTMLElement).style.setProperty('color', 'rgb(255, 255, 255)', 'important');
+        }
+      });
+    });
+    
+    const loginButtons = document.querySelectorAll('button[class*="login"], .login-button, [class*="login-button"]');
+    loginButtons.forEach(el => {
+      (el as HTMLElement).style.setProperty('background-color', dark ? 'rgb(229, 231, 235)' : 'rgb(31, 41, 55)', 'important');
+      (el as HTMLElement).style.setProperty('color', dark ? 'rgb(31, 41, 55)' : 'rgb(255, 255, 255)', 'important');
+    });
+    
+    // 强制重绘所有元素
     void document.documentElement.offsetHeight;
+    
+    // 强制触发所有组件的重新计算样式
+    const allElements = document.querySelectorAll('*');
+    for (let i = 0; i < Math.min(allElements.length, 100); i++) {
+      void (allElements[i] as HTMLElement).offsetHeight;
+    }
+    
+    // 定时器确保样式完全应用
+    setTimeout(() => {
+      document.body.style.transition = "background-color 0.01s";
+      document.body.style.backgroundColor = dark ? 'rgb(3, 7, 17)' : 'rgb(243, 244, 246)';
+      setTimeout(() => {
+        document.body.style.transition = "";
+      }, 50);
+    }, 0);
+  };
+  
+  // 直接应用样式到特定元素
+  const applyThemeToElements = (selector: string, dark: boolean) => {
+    const elements = document.querySelectorAll(selector);
+    elements.forEach(el => {
+      if (dark) {
+        (el as HTMLElement).style.setProperty('background-color', 'rgb(31, 41, 55)', 'important');
+        (el as HTMLElement).style.setProperty('color', 'rgb(243, 244, 246)', 'important');
+        
+        // 处理子元素中的文本颜色
+        const textElements = el.querySelectorAll('*');
+        textElements.forEach(text => {
+          (text as HTMLElement).style.setProperty('color', 'rgb(243, 244, 246)', 'important');
+        });
+      } else {
+        // 在浅色模式下特别设置导航栏和页脚为纯白色
+        if (selector.includes('nav') || selector.includes('footer')) {
+          (el as HTMLElement).style.setProperty('background-color', 'rgb(255, 255, 255)', 'important');
+        } else {
+          (el as HTMLElement).style.setProperty('background-color', 'rgb(243, 244, 246)', 'important');
+        }
+        (el as HTMLElement).style.setProperty('color', 'rgb(31, 41, 55)', 'important');
+        
+        // 处理子元素中的文本颜色
+        const textElements = el.querySelectorAll('*');
+        textElements.forEach(text => {
+          (text as HTMLElement).style.setProperty('color', 'rgb(31, 41, 55)', 'important');
+        });
+      }
+    });
   };
 
   // Effect to apply the theme to the <html> element when isDark changes
   useEffect(() => {
     if (typeof window === 'undefined') return;
     applyTheme(isDark);
+    
+    // 设置一个监视器，每隔一段时间重新应用主题，确保系统主题变化不会影响
+    const intervalId = setInterval(() => {
+      if (localStorage.getItem('theme')) {
+        applyTheme(localStorage.getItem('theme') === 'dark');
+        
+        // 额外的强制应用代码
+        const isCurrentlyDark = localStorage.getItem('theme') === 'dark';
+        if (!isCurrentlyDark) {
+          // 强制应用绿色到浅色模式的导航栏和页脚
+          document.querySelectorAll('nav, .nav, [class*="nav"], .themed-bg-secondary').forEach(el => {
+            (el as HTMLElement).style.setProperty('background-color', 'rgb(255, 255, 255)', 'important');
+          });
+          
+          document.querySelectorAll('footer, .footer, [class*="footer"], .themed-footer').forEach(el => {
+            (el as HTMLElement).style.setProperty('background-color', 'rgb(255, 255, 255)', 'important');
+          });
+        }
+      }
+    }, 500);
+    
+    return () => clearInterval(intervalId);
   }, [isDark]);
 
   const toggleTheme = () => {
@@ -90,6 +273,9 @@ const Switch = () => {
       // Only update if the user hasn't made a manual choice (i.e., no 'theme' in localStorage)
       if (typeof window !== 'undefined' && !localStorage.getItem('theme')) {
         setIsDark(e.matches);
+      } else {
+        // 如果用户已经手动选择了主题，确保系统主题变化不会影响
+        applyTheme(localStorage.getItem('theme') === 'dark');
       }
     };
 

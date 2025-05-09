@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { supabase } from '../lib/supabase';
+import AdminAccess from '~/components/AdminAccess';
 
 const ALLOWED_EMAIL_DOMAINS = ['student.keystoneacademy.cn', 'keystoneacademy.cn'];
 
@@ -63,8 +64,8 @@ export default function Login() {
 
   return (
     <Layout>
-      <div className="max-w-md mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8">Sign In</h1>
+      <div className="max-w-md mx-auto login-component">
+        <h1 className="text-3xl font-bold themed-heading mb-8">Sign In</h1>
 
         {error && (
           <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
@@ -79,13 +80,13 @@ export default function Login() {
               alt="Keystone Academy Logo"
               className="mx-auto mb-4 w-48 h-auto"
             />
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
+            <p className="themed-text-secondary mb-4">
               Please sign in with your Keystone Academy Microsoft account
             </p>
             <button
               onClick={handleMicrosoftLogin}
               disabled={loading}
-              className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium cursor-pointer dark:text-black dark:bg-[#EAEBED] dark:hover:bg-[#E0E0E2] text-white bg-[#2F2F2F] hover:bg-[#1F1F1F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2F2F2F] disabled:opacity-50"
+              className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium cursor-pointer themed-button"
             >
               {loading ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -103,8 +104,28 @@ export default function Login() {
             </button>
           </div>
 
-          <div className="text-center text-sm text-gray-500 dark:text-gray-400">
+          <div className="text-center text-sm themed-text-tertiary">
             <p>Only @student.keystoneacademy.cn and @keystoneacademy.cn email addresses are allowed</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="fixed bottom-0 left-0 right-0 shadow-lg z-20 themed-footer">
+        <div className="w-full py-4 px-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-6 pl-20">
+              <div className="flex items-center space-x-2">
+                <p className="text-sm themed-text-primary">Hosted by Round Square Executive Team</p>
+                <img src="/assets/RS.png" alt="Round Square Logo" className="h-4 w-auto brightness-100"/>
+              </div>
+              <a href="https://keycas.cn" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+                <p className="text-sm themed-text-primary">Powered by KeyCAS</p>
+                <img src="/assets/KeyCAS.svg" alt="KeyCAS Logo" className="h-4 w-auto themed-icon-brightness"/>
+              </a>
+            </div>
+            <div className="pr-20 themed-text-primary">
+              <AdminAccess />
+            </div>
           </div>
         </div>
       </div>

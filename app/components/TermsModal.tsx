@@ -24,7 +24,7 @@ export default function TermsModal() {
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-md z-50 flex items-center justify-center">
-      <div className="bg-white/95 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+      <div className="bg-white/95 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto terms-modal-dark">
         <div className="p-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Welcome to Round Square Day Story Relay</h2>
           
