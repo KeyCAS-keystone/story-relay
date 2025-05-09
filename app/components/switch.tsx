@@ -13,15 +13,62 @@ const Switch = () => {
     return false; // Default for SSR or if window is not available
   });
 
+  // 创建或更新 meta 标签
+  const updateMetaTag = (dark: boolean) => {
+    // 查找现有的 color-scheme meta 标签
+    let metaTag = document.querySelector('meta[name="color-scheme"]');
+    
+    // 如果不存在，创建一个新的
+    if (!metaTag) {
+      metaTag = document.createElement('meta');
+      metaTag.setAttribute('name', 'color-scheme');
+      document.head.appendChild(metaTag);
+    }
+    
+    // 设置 meta 标签的 content 属性
+    metaTag.setAttribute('content', dark ? 'dark' : 'light');
+  };
+
+  // 应用主题的方法 - 使用直接样式设置
+  const applyTheme = (dark: boolean) => {
+    const root = window.document.documentElement;
+    
+    if (dark) {
+      root.classList.add('dark');
+      // 直接设置样式属性覆盖任何 CSS
+      root.style.setProperty('color-scheme', 'dark', 'important');
+      root.style.setProperty('background-color', 'rgb(3, 7, 18)', 'important'); // bg-gray-950
+      document.body.style.setProperty('background-color', 'rgb(3, 7, 18)', 'important');
+      // 添加 CSS 变量覆盖
+      root.style.setProperty('--foreground-rgb', '255, 255, 255', 'important');
+      root.style.setProperty('--background-start-rgb', '3, 7, 18', 'important');
+      root.style.setProperty('--background-end-rgb', '3, 7, 18', 'important');
+      
+      // 更新 meta 标签
+      updateMetaTag(true);
+    } else {
+      root.classList.remove('dark');
+      // 直接设置样式属性覆盖任何 CSS
+      root.style.setProperty('color-scheme', 'light', 'important');
+      root.style.setProperty('background-color', 'white', 'important');
+      document.body.style.setProperty('background-color', 'white', 'important');
+      // 添加 CSS 变量覆盖
+      root.style.setProperty('--foreground-rgb', '0, 0, 0', 'important');
+      root.style.setProperty('--background-start-rgb', '255, 255, 255', 'important');
+      root.style.setProperty('--background-end-rgb', '255, 255, 255', 'important');
+      
+      // 更新 meta 标签
+      updateMetaTag(false);
+    }
+    
+    // 强制应用样式，触发重绘
+    void document.documentElement.offsetHeight;
+  };
+
   // Effect to apply the theme to the <html> element when isDark changes
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const root = window.document.documentElement;
-    if (isDark) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
+    applyTheme(isDark);
   }, [isDark]);
 
   const toggleTheme = () => {

@@ -5,7 +5,25 @@
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
+/* 默认（浅色）样式 */
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  @apply bg-white;
+  color-scheme: light !important; /* 强制浅色模式的 color-scheme */
+}
+
+/* 增加特异性的深色样式，确保只在 .dark 类存在时应用 */
+html.dark,
+html.dark body {
+  @apply bg-gray-950;
+  color-scheme: dark !important; /* 强制深色模式的 color-scheme */
+}
+
+/* 显式覆盖媒体查询 - 在浅色模式下 */
+@media (prefers-color-scheme: dark) {
+  html:not(.dark),
+  html:not(.dark) body {
+    @apply !bg-white; /* 感叹号放在样式类前面，而不是作为单独的类 */
+    color-scheme: light !important; /* 即使系统是深色，也强制浅色模式的 color-scheme */
+  }
 }
