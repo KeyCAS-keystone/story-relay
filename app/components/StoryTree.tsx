@@ -73,7 +73,19 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
       const parentY = parentRect.bottom - svgRect.top;
       const childX = childRect.left + childRect.width / 2 - svgRect.left;
       const childY = childRect.top - svgRect.top;
-      const path = `M${parentX},${parentY} C${parentX},${parentY + 40} ${childX},${childY - 40} ${childX},${childY}`;
+      const midY = (parentY + childY) / 2;
+      const curveRadius = 20; // 圆角半径
+      
+      const isChildOnLeft = childX < parentX;
+      
+      // 使用二次贝塞尔曲线 (Q command) 创建更平滑且方向正确的圆角路径
+      const path = `M${parentX},${parentY} 
+                   L${parentX},${midY - curveRadius} 
+                   Q${parentX},${midY} ${isChildOnLeft ? parentX - curveRadius : parentX + curveRadius},${midY} 
+                   L${isChildOnLeft ? childX + curveRadius : childX - curveRadius},${midY} 
+                   Q${childX},${midY} ${childX},${midY + curveRadius} 
+                   L${childX},${childY}`;
+      
       lines.push({ parentId: node.parent_id, childId: node.id, path });
     });
     setConnectionLines(lines);
@@ -164,8 +176,25 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
   };
 
   const getBaseCardStyle = (nodeId: string): React.CSSProperties => {
-    const isHovered = hoveredCardId === nodeId;
-    const isAnotherHovered = hoveredCardId !== null && !isHovered;
+    const isCurrentlyHovered = hoveredCardId === nodeId;
+    let isRelatedToHovered = false;
+
+    if (hoveredCardId && !isCurrentlyHovered) {
+      const hoveredNode = nodes.find(n => n.id === hoveredCardId);
+      if (hoveredNode) {
+        // Is the current card (nodeId) the parent of the hovered card?
+        if (hoveredNode.parent_id === nodeId) {
+          isRelatedToHovered = true;
+        }
+        // Is the current card (nodeId) a child of the hovered card?
+        const currentNodeDetails = nodes.find(n => n.id === nodeId);
+        if (currentNodeDetails && currentNodeDetails.parent_id === hoveredCardId) {
+          isRelatedToHovered = true;
+        }
+      }
+    }
+
+    const shouldBeBlurred = hoveredCardId !== null && !isCurrentlyHovered && !isRelatedToHovered;
     
     return {
       borderRadius: '1rem',
@@ -174,11 +203,12 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
       overflow: 'hidden',
       transition: 'all 0.2s ease-out', 
       minHeight: '80px', 
-      zIndex: isHovered ? 3 : 2,
-      filter: isAnotherHovered ? 'blur(2.5px)' : 'none',
-      opacity: isAnotherHovered ? 0.55 : 1,
+      zIndex: (isCurrentlyHovered || isRelatedToHovered) ? 3 : 2, // Elevate zIndex for hovered and related cards
+      filter: shouldBeBlurred ? 'blur(2.5px)' : 'none',
+      opacity: shouldBeBlurred ? 0.55 : 1,
       transformOrigin: 'center center',
       position: 'relative',
+      border: '2px solid #CD1D43', // Keeping 2px border as per last confirmed state
     };
   };
 
@@ -243,6 +273,11 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
     if ((window as any).__requestPositionUpdate) {
        (window as any).__requestPositionUpdate();
     }
+    setTimeout(() => {
+      if ((window as any).__requestPositionUpdate) {
+        (window as any).__requestPositionUpdate();
+      }
+    }, 220);
   };
 
   const handleMouseLeave = () => {
@@ -256,7 +291,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
     navigate('/submit', { state: { parentNodeId: nodeId } });
   };
 
-  const buttonClasses = "px-3 py-1 bg-indigo-400 text-white text-xs font-medium rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-400 transition-colors flex-shrink-0";
+  const buttonClasses = "px-3 py-1 bg-[#CD1D43] text-white text-xs font-medium rounded-md hover:bg-[#DC1D43] focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#CD1D43] transition-colors flex-shrink-0";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -308,7 +343,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
           onClick={() => {
             if (containerRef.current) containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className="w-12 h-12 rounded-full bg-white shadow-lg border border-gray-300 flex items-center justify-center text-2xl text-gray-700 hover:bg-indigo-100 hover:text-indigo-600 transition"
+          className="w-12 h-12 rounded-full bg-[#CD1D43] shadow-lg border border-gray-100 flex items-center justify-center text-2xl text-gray-100 hover:bg-[#DC1D43] hover:text-white transition"
         >
           ↑
         </button>
@@ -317,7 +352,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
           onClick={() => {
             if (containerRef.current) containerRef.current.scrollTo({ top: containerRef.current.scrollHeight, behavior: 'smooth' });
           }}
-          className="w-12 h-12 rounded-full bg-white shadow-lg border border-gray-300 flex items-center justify-center text-2xl text-gray-700 hover:bg-indigo-100 hover:text-indigo-600 transition"
+          className="w-12 h-12 rounded-full bg-[#CD1D43] shadow-lg border border-gray-100 flex items-center justify-center text-2xl text-gray-100 hover:bg-[#DC1D43] hover:text-white transition"
         >
           ↓
         </button>
@@ -328,25 +363,31 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
         style={{ width: '100%', height: svgHeight, zIndex: 1 }}
       >
         {connectionLines.map((line) => {
-          const applyEffect = hoveredCardId !== null;
+          let lineShouldBeStyled = false; // True if the line should be dimmed/blurred
+          if (hoveredCardId !== null) {
+            // If the line is NOT directly connected to the hovered card, it should be styled
+            if (line.parentId !== hoveredCardId && line.childId !== hoveredCardId) {
+              lineShouldBeStyled = true;
+            }
+          }
           
           return (
             <g 
               key={`${line.parentId}-${line.childId}`}
               style={{
-                opacity: applyEffect ? 0.3 : 1,
-                filter: applyEffect ? 'blur(1px)' : 'none',
+                opacity: lineShouldBeStyled ? 0.3 : 1,
+                filter: lineShouldBeStyled ? 'blur(1px)' : 'none',
                 transition: 'opacity 0.2s ease-out, filter 0.2s ease-out',
               }}
             >
-              <path d={line.path} fill="none" stroke="#a1a1aa" strokeWidth="2" strokeDasharray="4,2" />
+              <path d={line.path} fill="none" stroke="#CD1D43" strokeWidth="2" />
               <path d={`${line.path}`} fill="none" stroke="none" strokeWidth="0" markerEnd="url(#arrowhead)" />
             </g>
-          );
+          );//lines
         })}
         <defs>
           <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#a1a1aa" />
+            <polygon points="0 0, 10 3.5, 0 7" fill="#CD1D43" />
           </marker>
         </defs>
       </svg>
