@@ -107,6 +107,11 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
           newPositions.set(id, cardCenter);
         }
       });
+      
+      // Removed the redundant direct calculation and setting of connectionLines here.
+      // The useEffect hook that depends on cardPositions will handle this.
+      
+      // 最后更新位置状态
       setCardPositions(newPositions);
     };
 
@@ -115,18 +120,12 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
         cancelAnimationFrame(animationFrameId.current);
       }
       animationFrameId.current = requestAnimationFrame(performCardPositionUpdate);
-
-      if (scrollStopTimeoutId.current) {
-        clearTimeout(scrollStopTimeoutId.current);
-      }
-      scrollStopTimeoutId.current = setTimeout(() => {
-        calculateConnectionLines();
-      }, 150);
     };
 
     (window as any).__requestPositionUpdate = requestPositionUpdate;
 
-    setTimeout(requestPositionUpdate, 100);
+    // 初始化时立即请求更新
+    requestPositionUpdate();
 
     const scroller = containerRef.current;
     if (scroller) {
@@ -141,12 +140,9 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
-      if (scrollStopTimeoutId.current) {
-        clearTimeout(scrollStopTimeoutId.current);
-      }
       delete (window as any).__requestPositionUpdate;
     };
-  }, [calculateConnectionLines]);
+  }, [nodes]);
 
   const nodesByLevel = nodes.reduce((acc, node) => {
     const level = node.level || 1;
@@ -270,9 +266,6 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
 
   const handleMouseEnter = (nodeId: string) => {
     setHoveredCardId(nodeId);
-    if ((window as any).__requestPositionUpdate) {
-       (window as any).__requestPositionUpdate();
-    }
     setTimeout(() => {
       if ((window as any).__requestPositionUpdate) {
         (window as any).__requestPositionUpdate();
@@ -282,9 +275,11 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
 
   const handleMouseLeave = () => {
     setHoveredCardId(null);
-    if ((window as any).__requestPositionUpdate) {
-       (window as any).__requestPositionUpdate();
-    }
+    setTimeout(() => {
+      if ((window as any).__requestPositionUpdate) {
+         (window as any).__requestPositionUpdate();
+      }
+    }, 220);
   };
 
   const handleWriteFromHere = (nodeId: string) => {
