@@ -40,34 +40,36 @@ export default function Home() {
 
       if (error) throw error;
 
-      // 计算每个节点的层级
-      const nodesWithLevel = await Promise.all(
-        (data || []).map(async (node) => {
-          let level = 1;
-          let currentParentId = node.parent_id;
-          
-          // 递归获取父节点，计算层级
-          while (currentParentId) {
-            const { data: parentNode } = await supabase
-              .from('nodes')
-              .select('parent_id')
-              .eq('id', currentParentId)
-              .single();
-            
-            if (parentNode) {
-              level++;
-              currentParentId = parentNode.parent_id;
-            } else {
-              break;
-            }
+      // Create a map of all nodes for quick lookup
+      const nodeMap = new Map((data || []).map(node => [node.id, node]));
+      
+      // Calculate levels in memory
+      const nodesWithLevel = (data || []).map(node => {
+        let level = 1;
+        let currentParentId = node.parent_id;
+        const visited = new Set<string>(); // Prevent circular references
+        
+        while (currentParentId) {
+          if (visited.has(currentParentId)) {
+            console.warn('Circular reference detected for node:', node.id);
+            break;
           }
+          visited.add(currentParentId);
+          
+          const parentNode = nodeMap.get(currentParentId);
+          if (parentNode) {
+            level++;
+            currentParentId = parentNode.parent_id;
+          } else {
+            break;
+          }
+        }
 
-          return {
-            ...node,
-            level
-          };
-        })
-      );
+        return {
+          ...node,
+          level
+        };
+      });
 
       setNodes(nodesWithLevel);
     } catch (error) {
