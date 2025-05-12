@@ -401,7 +401,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
         <div
           style={{
             position: 'fixed',
-            right: '32px',
+            right: '54px',
             top: `calc(50vh - 60px)`,
             zIndex: 50,
             display: 'flex',
