@@ -222,10 +222,22 @@ export default function Submit() {
       </div>
 
       {/* Fixed Footer */}
-      <div className="fixed bottom-0 left-0 right-0 shadow-lg z-20 themed-footer">
-        <div className="w-full py-4 px-4">
+      <div 
+        className="w-full shadow-lg themed-footer" 
+        style={{ 
+          position: 'fixed', 
+          bottom: '8px', 
+          left: 0, 
+          right: 0, 
+          zIndex: 20,
+          height: '45px',
+          display: 'flex',
+          alignItems: 'center'
+        }}
+      >
+        <div className="w-full px-6">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-6 pl-20">
+            <div className="flex items-center space-x-4 pl-12">
               <div className="flex items-center space-x-2">
                 <p className="text-sm text-white">Hosted by Round Square Executive Team</p>
                 <img src="/assets/RS.png" alt="Round Square Logo" className="h-4 w-auto brightness-100"/>
@@ -235,7 +247,7 @@ export default function Submit() {
                 <img src="/assets/KeyCAS.svg" alt="KeyCAS Logo" className="h-4 w-auto brightness-100"/>
               </a>
             </div>
-            <div className="pr-20 themed-text-primary">
+            <div className="pr-12 text-white">
               <AdminAccess />
             </div>
           </div>
