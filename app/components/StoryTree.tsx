@@ -52,6 +52,14 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
       setFooterHeight(footH);
       const availableHeight = window.innerHeight - navH - footH;
       setViewportCenter(navH + availableHeight / 2);
+
+      // 强制设置nav/footer背景色为#CD1D43
+      if (navbar) {
+        navbar.style.setProperty('background-color', '#CD1D43', 'important');
+      }
+      if (footer) {
+        footer.style.setProperty('background-color', '#CD1D43', 'important');
+      }
     };
     updateLayoutMetrics();
     window.addEventListener('resize', updateLayoutMetrics);
@@ -311,192 +319,269 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
   }, []);
 
   return (
-    <div
-      ref={containerRef}
-      className="fixed left-0 bg-transparent overflow-y-auto"
-      style={{
-        top: `${navbarHeight}px`,
-        width: '100vw',
-        height: `calc(100vh - ${navbarHeight}px)`,
-        zIndex: 10,
-      }}
-    >
-      {/* Up/Down scroll buttons */}
+    <>
+      {/* Left gold border (outermost) */}
       <div
         style={{
           position: 'fixed',
-          right: '32px',
-          top: `calc(50vh - 60px)`,
-          zIndex: 50,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
+          top: `${navbarHeight}px`,
+          left: 0,
+          width: '8px',
+          height: `calc(100vh - ${navbarHeight}px)`,
+          backgroundColor: '#EFB32C',
+          zIndex: 11
+        }}
+      />
+      {/* Right gold border (outermost) */}
+      <div
+        style={{
+          position: 'fixed',
+          top: `${navbarHeight}px`,
+          right: 0,
+          width: '8px',
+          height: `calc(100vh - ${navbarHeight}px)`,
+          backgroundColor: '#EFB32C',
+          zIndex: 11
+        }}
+      />
+      {/* Left red area (between gold and content) */}
+      <div
+        style={{
+          position: 'fixed',
+          top: `${navbarHeight}px`,
+          left: '4px',
+          width: '45px',
+          height: `calc(100vh - ${navbarHeight}px)`,
+          backgroundColor: '#CD1D43',
+          zIndex: 9
+        }}
+      />
+      {/* Right red area (between gold and content) */}
+      <div
+        style={{
+          position: 'fixed',
+          top: `${navbarHeight}px`,
+          right: '4px',
+          width: '45px',
+          height: `calc(100vh - ${navbarHeight}px)`,
+          backgroundColor: '#CD1D43',
+          zIndex: 9
+        }}
+      />
+      {/* Left red border */}
+      <div
+        style={{
+          position: 'fixed',
+          top: `${navbarHeight}px`,
+          left: '44px',
+          width: '2px',
+          height: `calc(100vh - ${navbarHeight}px)`,
+          backgroundColor: '#CD1D43',
+          zIndex: 10
+        }}
+      />
+      {/* Right red border */}
+      <div
+        style={{
+          position: 'fixed',
+          top: `${navbarHeight}px`,
+          right: '44px',
+          width: '2px',
+          height: `calc(100vh - ${navbarHeight}px)`,
+          backgroundColor: '#CD1D43',
+          zIndex: 10
+        }}
+      />
+      {/* Main content container */}
+      <div
+        ref={containerRef}
+        className="fixed overflow-y-auto"
+        style={{
+          top: `${navbarHeight}px`,
+          left: '46px',
+          right: '46px',
+          width: 'calc(100vw - 92px)',
+          height: `calc(100vh - ${navbarHeight}px)`,
+          zIndex: 12
         }}
       >
-        <button
-          aria-label="Scroll to top"
-          onClick={() => {
-            if (containerRef.current) containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+        {/* Up/Down scroll buttons */}
+        <div
+          style={{
+            position: 'fixed',
+            right: '32px',
+            top: `calc(50vh - 60px)`,
+            zIndex: 50,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
           }}
-          className="w-12 h-12 rounded-full bg-[#CD1D43] shadow-lg border border-gray-100 flex items-center justify-center text-2xl text-gray-100 hover:bg-[#DC1D43] hover:text-white transition"
         >
-          ↑
-        </button>
-        <button
-          aria-label="Scroll to bottom"
-          onClick={() => {
-            if (containerRef.current) containerRef.current.scrollTo({ top: containerRef.current.scrollHeight, behavior: 'smooth' });
-          }}
-          className="w-12 h-12 rounded-full bg-[#CD1D43] shadow-lg border border-gray-100 flex items-center justify-center text-2xl text-gray-100 hover:bg-[#DC1D43] hover:text-white transition"
+          <button
+            aria-label="Scroll to top"
+            onClick={() => {
+              if (containerRef.current) containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="w-12 h-12 rounded-full bg-[#CD1D43] shadow-lg border border-gray-100 flex items-center justify-center text-2xl text-gray-100 hover:bg-[#DC1D43] hover:text-white transition"
+          >
+            ↑
+          </button>
+          <button
+            aria-label="Scroll to bottom"
+            onClick={() => {
+              if (containerRef.current) containerRef.current.scrollTo({ top: containerRef.current.scrollHeight, behavior: 'smooth' });
+            }}
+            className="w-12 h-12 rounded-full bg-[#CD1D43] shadow-lg border border-gray-100 flex items-center justify-center text-2xl text-gray-100 hover:bg-[#DC1D43] hover:text-white transition"
+          >
+            ↓
+          </button>
+        </div>
+        <svg
+          ref={svgRef}
+          className="absolute left-0 top-0 pointer-events-none"
+          style={{ width: '100%', height: svgHeight, zIndex: 1 }}
         >
-          ↓
-        </button>
-      </div>
-      <svg
-        ref={svgRef}
-        className="absolute left-0 top-0 pointer-events-none"
-        style={{ width: '100%', height: svgHeight, zIndex: 1 }}
-      >
-        {connectionLines.map((line) => {
-          let lineShouldBeStyled = false; // True if the line should be dimmed/blurred
-          if (hoveredCardId !== null) {
-            // If the line is NOT directly connected to the hovered card, it should be styled
-            if (line.parentId !== hoveredCardId && line.childId !== hoveredCardId) {
-              lineShouldBeStyled = true;
+          {connectionLines.map((line) => {
+            let lineShouldBeStyled = false; // True if the line should be dimmed/blurred
+            if (hoveredCardId !== null) {
+              // If the line is NOT directly connected to the hovered card, it should be styled
+              if (line.parentId !== hoveredCardId && line.childId !== hoveredCardId) {
+                lineShouldBeStyled = true;
+              }
             }
-          }
-          
-          return (
-            <g 
-              key={`${line.parentId}-${line.childId}`}
-              style={{
-                opacity: lineShouldBeStyled ? 0.3 : 1,
-                filter: lineShouldBeStyled ? 'blur(1px)' : 'none',
-                transition: 'opacity 0.2s ease-out, filter 0.2s ease-out',
-              }}
-            >
-              <path d={line.path} fill="none" stroke="#CD1D43" strokeWidth="2" />
-              <path d={`${line.path}`} fill="none" stroke="none" strokeWidth="0" markerEnd="url(#arrowhead)" />
-            </g>
-          );//lines
-        })}
-        <defs>
-          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#CD1D43" />
-          </marker>
-        </defs>
-      </svg>
-      <div ref={contentWrapperRef} className="relative flex flex-col items-center w-full py-12" style={{ zIndex: 2 }}>
-        {starterNodes.length > 0 && (
-          <div className="flex justify-center mb-16">
-            {starterNodes.map((node) => {
-              const scale = calculateScale(node.id);
-              const baseWidth = getDynamicCardWidth(starterNodes.length);
-              return (
-                <div 
-                  key={node.id} 
-                  ref={(el) => { if (el) cardRefs.current.set(node.id, el); }}
-                  style={getCardStyle(node.id, 1, baseWidth)}
-                  className="mx-4 shadow-lg card-component"
-                  onMouseEnter={() => handleMouseEnter(node.id)}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <div style={getContentStyle(scale)} className="pt-8">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="font-bold text-lg">{node.summary}</div>
+            
+            return (
+              <g 
+                key={`${line.parentId}-${line.childId}`}
+                style={{
+                  opacity: lineShouldBeStyled ? 0.3 : 1,
+                  filter: lineShouldBeStyled ? 'blur(1px)' : 'none',
+                  transition: 'opacity 0.2s ease-out, filter 0.2s ease-out',
+                }}
+              >
+                <path d={line.path} fill="none" stroke="#CD1D43" strokeWidth="2" />
+                <path d={`${line.path}`} fill="none" stroke="none" strokeWidth="0" markerEnd="url(#arrowhead)" />
+              </g>
+            );//lines
+          })}
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#CD1D43" />
+            </marker>
+          </defs>
+        </svg>
+        <div ref={contentWrapperRef} className="relative flex flex-col items-center w-full py-12" style={{ zIndex: 2 }}>
+          {starterNodes.length > 0 && (
+            <div className="flex justify-center mb-16">
+              {starterNodes.map((node) => {
+                const scale = calculateScale(node.id);
+                const baseWidth = getDynamicCardWidth(starterNodes.length);
+                return (
+                  <div 
+                    key={node.id} 
+                    ref={(el) => { if (el) cardRefs.current.set(node.id, el); }}
+                    style={getCardStyle(node.id, 1, baseWidth)}
+                    className="mx-4 shadow-lg card-component"
+                    onMouseEnter={() => handleMouseEnter(node.id)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <div style={getContentStyle(scale)} className="pt-8">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="font-bold text-lg">{node.summary}</div>
+                        <button 
+                          onClick={() => handleWriteFromHere(node.id)}
+                          className={buttonClasses}
+                          title="Write from here"
+                          style={{ marginLeft: '1rem', flexShrink: 0 }}
+                        >
+                          Write from here
+                        </button>
+                      </div>
+                      <div className="mb-4 text-base leading-relaxed">{node.content}</div>
                       <button 
                         onClick={() => handleWriteFromHere(node.id)}
-                        className={buttonClasses}
-                        title="Write from here"
-                        style={{ marginLeft: '1rem', flexShrink: 0 }}
+                        className={`${buttonClasses} mt-4 self-center`}
                       >
                         Write from here
                       </button>
                     </div>
-                    <div className="mb-4 text-base leading-relaxed">{node.content}</div>
-                    <button 
-                      onClick={() => handleWriteFromHere(node.id)}
-                      className={`${buttonClasses} mt-4 self-center`}
-                    >
-                      Write from here
-                    </button>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-        {allLevels.filter(l => l !== 1).map((level) => (
-          <div key={level} className="flex flex-row justify-center items-start space-x-10 mb-20">
-            {nodesByLevel[level].map((node) => {
-              const scale = calculateScale(node.id);
-              const baseWidth = getDynamicCardWidth(nodesByLevel[level].length);
-              return (
-                <div 
-                  key={node.id} 
-                  ref={(el) => { if (el) cardRefs.current.set(node.id, el); }}
-                  style={getCardStyle(node.id, level, baseWidth)}
-                  className="mx-3 my-3 shadow-lg card-component"
-                  onMouseEnter={() => handleMouseEnter(node.id)}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <div style={getContentStyle(scale)} className="pt-8">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="font-bold text-lg">{node.summary}</div>
+                );
+              })}
+            </div>
+          )}
+          {allLevels.filter(l => l !== 1).map((level) => (
+            <div key={level} className="flex flex-row justify-center items-start space-x-10 mb-20">
+              {nodesByLevel[level].map((node) => {
+                const scale = calculateScale(node.id);
+                const baseWidth = getDynamicCardWidth(nodesByLevel[level].length);
+                return (
+                  <div 
+                    key={node.id} 
+                    ref={(el) => { if (el) cardRefs.current.set(node.id, el); }}
+                    style={getCardStyle(node.id, level, baseWidth)}
+                    className="mx-3 my-3 shadow-lg card-component"
+                    onMouseEnter={() => handleMouseEnter(node.id)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <div style={getContentStyle(scale)} className="pt-8">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="font-bold text-lg">{node.summary}</div>
+                        <button 
+                          onClick={() => handleWriteFromHere(node.id)}
+                          className={buttonClasses}
+                          title="Write from here"
+                          style={{ marginLeft: '1rem', flexShrink: 0 }}
+                        >
+                          Write from here
+                        </button>
+                      </div>
+                      <div className="mb-4 text-base leading-relaxed">{node.content}</div>
                       <button 
                         onClick={() => handleWriteFromHere(node.id)}
-                        className={buttonClasses}
-                        title="Write from here"
-                        style={{ marginLeft: '1rem', flexShrink: 0 }}
+                        className={`${buttonClasses} mt-4 self-center`}
                       >
                         Write from here
                       </button>
                     </div>
-                    <div className="mb-4 text-base leading-relaxed">{node.content}</div>
-                    <button 
-                      onClick={() => handleWriteFromHere(node.id)}
-                      className={`${buttonClasses} mt-4 self-center`}
-                    >
-                      Write from here
-                    </button>
                   </div>
+                );
+              })}
+            </div>
+          ))}
+          {/* Footer as part of the scrollable content */}
+          <div 
+            className="w-full shadow-lg transition-opacity duration-300 themed-footer" 
+            style={{ 
+              position: 'fixed', 
+              bottom: 0, 
+              left: 0, 
+              right: 0, 
+              zIndex: 20,
+              opacity: showFooter ? 1 : 0,
+              pointerEvents: showFooter ? 'auto' : 'none'
+            }}
+          >
+            <div className="w-full py-4 px-4">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center space-x-6 pl-20">
+                  <div className="flex items-center space-x-2">
+                    <p className="text-sm text-white">Hosted by Round Square Executive Team</p>
+                    <img src="/assets/RS.png" alt="Round Square Logo" className="h-4 w-auto brightness-100"/>
+                  </div>
+                  <a href="https://keycas.cn" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+                    <p className="text-sm text-white">Powered by KeyCAS</p>
+                    <img src="/assets/KeyCAS.svg" alt="KeyCAS Logo" className="h-4 w-auto themed-icon-brightness"/>
+                  </a>
                 </div>
-              );
-            })}
-          </div>
-        ))}
-        {/* Footer as part of the scrollable content */}
-        <div 
-          className="w-full shadow-lg transition-opacity duration-300 themed-footer" 
-          style={{ 
-            position: 'fixed', 
-            bottom: 0, 
-            left: 0, 
-            right: 0, 
-            zIndex: 20,
-            opacity: showFooter ? 1 : 0,
-            pointerEvents: showFooter ? 'auto' : 'none'
-          }}
-        >
-          <div className="w-full py-4 px-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-6 pl-20">
-                <div className="flex items-center space-x-2">
-                  <p className="text-sm themed-text-primary">Hosted by Round Square Executive Team</p>
-                  <img src="/assets/RS.png" alt="Round Square Logo" className="h-4 w-auto brightness-100"/>
+                <div className="pr-20 themed-text-primary">
+                  <AdminAccess />
                 </div>
-                <a href="https://keycas.cn" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-                  <p className="text-sm themed-text-primary">Powered by KeyCAS</p>
-                  <img src="/assets/KeyCAS.svg" alt="KeyCAS Logo" className="h-4 w-auto themed-icon-brightness"/>
-                </a>
-              </div>
-              <div className="pr-20 themed-text-primary">
-                <AdminAccess />
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
