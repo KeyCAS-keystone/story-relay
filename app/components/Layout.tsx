@@ -83,61 +83,83 @@ export default function Layout({ children }: LayoutProps) {
       />
 
       <div className="min-h-screen bg-transparent flex flex-col">
-        <nav className="shadow-lg relative z-10 themed-bg-secondary" style={{ backgroundColor: 'var(--nav-bg) !important' }}>
-          <div className="w-full px-4">
-            <div className="flex justify-between h-16">
-              <div className="flex">
-                <div className="flex-shrink-0 flex items-center pl-10">
-                  <Link to="/" className="flex items-center space-x-3">
-                    <img src="/assets/RS.png" alt="Round Square Logo" className="h-8 w-auto"/>
-                    <span className="text-xl font-bold themed-text-primary">
+        {/* Top gold border */}
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '8px',
+            backgroundColor: '#EFB32C',
+            zIndex: 101
+          }}
+        />
+        <nav className="shadow-lg relative z-10" style={{ 
+          backgroundColor: 'var(--nav-bg)', 
+          color: 'var(--nav-text)', 
+          height: '45px', 
+          display: 'flex', 
+          alignItems: 'center',
+          marginTop: '8px'
+        }}>
+          <div className="w-full px-8">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center">
+                <div className="flex-shrink-0 flex items-center pl-8">
+                  <Link to="/" className="flex items-center space-x-2">
+                    <img src="/assets/RS.png" alt="Round Square Logo" className="h-7 w-auto"/>
+                    <span className="text-lg font-bold" style={{ color: 'var(--nav-text)' }}>
                       Round Square Day Story Relay
                     </span>
                   </Link>
                 </div>
-                <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                <div className="hidden sm:ml-6 sm:flex sm:space-x-6">
                   <Link
                     to="/"
-                    className="border-transparent themed-text-tertiary hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                    className="border-transparent hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 border-b-2 text-sm font-medium"
+                    style={{ color: 'var(--nav-text)' }}
                   >
                     Home
                   </Link>
                   {user && (
                     <Link
                       to="/submit"
-                      className="border-transparent themed-text-tertiary hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                      className="border-transparent hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 border-b-2 text-sm font-medium"
+                      style={{ color: 'var(--nav-text)' }}
                     >
                       Submit Story
                     </Link>
                   )}
                 </div>
               </div>
-              <div className="flex items-center pr-10">
-                <div className="flex items-center space-x-4">
+              <div className="flex items-center pr-8">
+                <div className="flex items-center space-x-3">
                   <Switch />
                   {loading ? (
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center">
                       <Loader />
                     </div>
                   ) : user ? (
-                    <div className="flex items-center pl-6 space-x-3">
+                    <div className="flex items-center pl-3 space-x-2">
                       <img
                         src={displayAvatarUrl}
                         alt="User avatar"
-                        className="h-10 w-10 rounded-full"
+                        className="h-8 w-8 rounded-full"
                       />
                       <button
                         onClick={() => signOut()}
-                        className="themed-text-tertiary hover:text-gray-700 cursor-pointer text-sm font-medium"
+                        className="hover:text-gray-700 cursor-pointer text-sm font-medium"
+                        style={{ color: 'var(--nav-text)' }}
                       >
                         Sign Out
                       </button>
-                      
                     </div>
                   ) : (
                     <Link
                       to="/login"
-                      className="themed-text-tertiary hover:text-gray-700 text-sm font-medium"
+                      className="hover:text-gray-700 text-sm font-medium"
+                      style={{ color: 'var(--nav-text)' }}
                     >
                       Sign In
                     </Link>
@@ -151,6 +173,19 @@ export default function Layout({ children }: LayoutProps) {
         <main className="flex-grow max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 relative z-10">
           {children}
         </main>
+
+        {/* Bottom gold border */}
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '8px',
+            backgroundColor: '#EFB32C',
+            zIndex: 101
+          }}
+        />
       </div>
     </>
   );

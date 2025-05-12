@@ -36,10 +36,10 @@ html.dark body {
   --card-text: #1f2937; /* 浅色模式卡片文本 */
   --login-bg: #f3f4f6; /* 浅色模式登录背景 */
   --login-text: #1f2937; /* 浅色模式登录文本 */
-  --nav-text: #1f2937; /* 浅色模式导航栏文本 */
-  --footer-text: #1f2937; /* 浅色模式页脚文本 */
-  --nav-bg: #ffffff; /* 浅色模式导航栏背景 - 纯白色 */
-  --footer-bg: #ffffff; /* 浅色模式页脚背景 - 纯白色 */
+  --nav-text: #ffffff; /* 导航栏文本 - 白色 */
+  --footer-text: #ffffff; /* 页脚文本 - 白色 */
+  --nav-bg: #CD1D43; /* 导航栏背景 - 红色 */
+  --footer-bg: #CD1D43; /* 页脚背景 - 红色 */
   --button-bg: #1f2937; /* 浅色模式按钮背景 - 黑色 */
   --button-text: #ffffff; /* 浅色模式按钮文本 - 白色 */
   --heading-text: #1f2937; /* 浅色模式标题文本 */
@@ -66,10 +66,10 @@ html.dark {
   --card-text: #f3f4f6; /* 深色模式卡片文本 */
   --login-bg: #030711; /* 登录卡片背景和主背景一致 */
   --login-text: #f3f4f6; /* 深色模式登录文本 */
-  --nav-text: #f3f4f6; /* 深色模式导航栏文本 */
-  --footer-text: #f3f4f6; /* 深色模式页脚文本 */
-  --nav-bg: #030711; /* 深色模式导航栏背景 - 改为与主背景一致 */
-  --footer-bg: #030711; /* 深色模式页脚背景 - 改为与主背景一致 */
+  --nav-text: #ffffff; /* 导航栏文本 - 保持白色 */
+  --footer-text: #ffffff; /* 页脚文本 - 保持白色 */
+  --nav-bg: #CD1D43; /* 导航栏背景 - 保持红色 */
+  --footer-bg: #CD1D43; /* 页脚背景 - 保持红色 */
   --button-bg: #e5e7eb; /* 深色模式按钮背景 - 浅色 */
   --button-text: #1f2937; /* 深色模式按钮文本 - 深色 */
   --heading-text: #f3f4f6; /* 深色模式标题文本 */
@@ -98,10 +98,10 @@ html[data-theme="dark"] {
   --card-text: #f3f4f6;
   --login-bg: #1f2937;
   --login-text: #f3f4f6;
-  --nav-text: #f3f4f6;
-  --footer-text: #f3f4f6;
-  --nav-bg: #1f2937;
-  --footer-bg: #1f2937;
+  --nav-text: #ffffff; /* 导航栏文本 - 保持白色 */
+  --footer-text: #ffffff; /* 页脚文本 - 保持白色 */
+  --nav-bg: #CD1D43; /* 导航栏背景 - 保持红色 */
+  --footer-bg: #CD1D43; /* 页脚背景 - 保持红色 */
   --button-bg: #e5e7eb;
   --button-text: #1f2937;
   --heading-text: #f3f4f6;

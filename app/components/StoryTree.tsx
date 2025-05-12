@@ -52,14 +52,6 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
       setFooterHeight(footH);
       const availableHeight = window.innerHeight - navH - footH;
       setViewportCenter(navH + availableHeight / 2);
-
-      // 强制设置nav/footer背景色为#CD1D43
-      if (navbar) {
-        navbar.style.setProperty('background-color', '#CD1D43', 'important');
-      }
-      if (footer) {
-        footer.style.setProperty('background-color', '#CD1D43', 'important');
-      }
     };
     updateLayoutMetrics();
     window.addEventListener('resize', updateLayoutMetrics);
@@ -324,72 +316,72 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
       <div
         style={{
           position: 'fixed',
-          top: `${navbarHeight}px`,
+          top: 0,
           left: 0,
           width: '8px',
-          height: `calc(100vh - ${navbarHeight}px)`,
+          height: '100vh',
           backgroundColor: '#EFB32C',
-          zIndex: 11
+          zIndex: 100
         }}
       />
       {/* Right gold border (outermost) */}
       <div
         style={{
           position: 'fixed',
-          top: `${navbarHeight}px`,
+          top: 0,
           right: 0,
           width: '8px',
-          height: `calc(100vh - ${navbarHeight}px)`,
+          height: '100vh',
           backgroundColor: '#EFB32C',
-          zIndex: 11
+          zIndex: 100
         }}
       />
       {/* Left red area (between gold and content) */}
       <div
         style={{
           position: 'fixed',
-          top: `${navbarHeight}px`,
+          top: 0,
           left: '4px',
           width: '45px',
-          height: `calc(100vh - ${navbarHeight}px)`,
+          height: '100vh',
           backgroundColor: '#CD1D43',
-          zIndex: 9
+          zIndex: 99
         }}
       />
       {/* Right red area (between gold and content) */}
       <div
         style={{
           position: 'fixed',
-          top: `${navbarHeight}px`,
+          top: 0,
           right: '4px',
           width: '45px',
-          height: `calc(100vh - ${navbarHeight}px)`,
+          height: '100vh',
           backgroundColor: '#CD1D43',
-          zIndex: 9
+          zIndex: 99
         }}
       />
       {/* Left red border */}
       <div
         style={{
           position: 'fixed',
-          top: `${navbarHeight}px`,
+          top: 0,
           left: '44px',
           width: '2px',
-          height: `calc(100vh - ${navbarHeight}px)`,
+          height: '100vh',
           backgroundColor: '#CD1D43',
-          zIndex: 10
+          zIndex: 100
         }}
       />
       {/* Right red border */}
       <div
         style={{
           position: 'fixed',
-          top: `${navbarHeight}px`,
+          top: 0,
           right: '44px',
           width: '2px',
-          height: `calc(100vh - ${navbarHeight}px)`,
+          height: '100vh',
           backgroundColor: '#CD1D43',
-          zIndex: 10
+          zIndex: 100
         }}
       />
       {/* Main content container */}
@@ -397,11 +389,11 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
         ref={containerRef}
         className="fixed overflow-y-auto"
         style={{
-          top: `${navbarHeight}px`,
+          top: `calc(${navbarHeight}px + 8px)`,
           left: '46px',
           right: '46px',
           width: 'calc(100vw - 92px)',
-          height: `calc(100vh - ${navbarHeight}px)`,
+          height: `calc(100vh - ${navbarHeight}px - 8px - 8px - 45px)`,
           zIndex: 12
         }}
       >
@@ -551,30 +543,31 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
           ))}
           {/* Footer as part of the scrollable content */}
           <div 
-            className="w-full shadow-lg transition-opacity duration-300 themed-footer" 
+            className="w-full shadow-lg themed-footer" 
             style={{ 
               position: 'fixed', 
-              bottom: 0, 
+              bottom: '8px', 
               left: 0, 
               right: 0, 
               zIndex: 20,
-              opacity: showFooter ? 1 : 0,
-              pointerEvents: showFooter ? 'auto' : 'none'
+              height: '45px',
+              display: 'flex',
+              alignItems: 'center'
             }}
           >
-            <div className="w-full py-4 px-4">
+            <div className="w-full px-6">
               <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-6 pl-20">
+                <div className="flex items-center space-x-4 pl-12">
                   <div className="flex items-center space-x-2">
                     <p className="text-sm text-white">Hosted by Round Square Executive Team</p>
                     <img src="/assets/RS.png" alt="Round Square Logo" className="h-4 w-auto brightness-100"/>
                   </div>
                   <a href="https://keycas.cn" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
                     <p className="text-sm text-white">Powered by KeyCAS</p>
-                    <img src="/assets/KeyCAS.svg" alt="KeyCAS Logo" className="h-4 w-auto themed-icon-brightness"/>
+                    <img src="/assets/KeyCAS.svg" alt="KeyCAS Logo" className="h-4 w-auto brightness-100"/>
                   </a>
                 </div>
-                <div className="pr-20 themed-text-primary">
+                <div className="pr-12 text-white">
                   <AdminAccess />
                 </div>
               </div>

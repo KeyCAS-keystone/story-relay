@@ -129,44 +129,6 @@ export function ThemeScripts() {
                 root.setAttribute('data-mode', 'light');
                 root.setAttribute('data-color-mode', 'light');
                 document.body.style.backgroundColor = 'rgb(243, 244, 246)';
-                
-                // 强制应用纯白色到导航栏和页脚
-                setTimeout(function() {
-                  document.querySelectorAll('nav, .nav, [class*="nav"], .themed-bg-secondary').forEach(el => {
-                    el.style.backgroundColor = 'rgb(255, 255, 255)';
-                    el.style.setProperty('background-color', 'rgb(255, 255, 255)', 'important');
-                  });
-                  
-                  document.querySelectorAll('footer, .footer, [class*="footer"], .themed-footer').forEach(el => {
-                    el.style.backgroundColor = 'rgb(255, 255, 255)';
-                    el.style.setProperty('background-color', 'rgb(255, 255, 255)', 'important');
-                  });
-                }, 10);
-                
-                // 重复几次以确保样式应用
-                setTimeout(function() {
-                  document.querySelectorAll('nav, .nav, [class*="nav"], .themed-bg-secondary, footer, .footer, [class*="footer"], .themed-footer').forEach(el => {
-                    el.style.setProperty('background-color', 'rgb(255, 255, 255)', 'important');
-                  });
-                }, 100);
-                
-                setTimeout(function() {
-                  document.querySelectorAll('nav, .nav, [class*="nav"], .themed-bg-secondary, footer, .footer, [class*="footer"], .themed-footer').forEach(el => {
-                    el.style.setProperty('background-color', 'rgb(255, 255, 255)', 'important');
-                  });
-                }, 500);
-                
-                // 强制应用按钮样式
-                document.querySelectorAll('.themed-button, button[class*="themed-button"], [class*="login"] button, [type="submit"]').forEach(el => {
-                  el.style.setProperty('background-color', 'rgb(31, 41, 55)', 'important');
-                  el.style.setProperty('color', 'rgb(255, 255, 255)', 'important');
-                  el.style.setProperty('border-color', 'rgb(31, 41, 55)', 'important');
-                  
-                  // 处理按钮内的所有文本元素
-                  el.querySelectorAll('*').forEach(text => {
-                    text.style.setProperty('color', 'rgb(255, 255, 255)', 'important');
-                  });
-                });
               }
             }
             
@@ -179,48 +141,6 @@ export function ThemeScripts() {
                 applyStoredTheme();
               }
             });
-            
-            // 创建一个MutationObserver来监视DOM变化
-            if (typeof MutationObserver !== 'undefined') {
-              const observer = new MutationObserver(function(mutations) {
-                const theme = localStorage.getItem('theme');
-                if (theme !== 'dark') {
-                  document.querySelectorAll('nav, .nav, [class*="nav"], .themed-bg-secondary, footer, .footer, [class*="footer"], .themed-footer').forEach(el => {
-                    el.style.setProperty('background-color', 'rgb(255, 255, 255)', 'important');
-                  });
-                  
-                  // 强制应用按钮样式
-                  document.querySelectorAll('.themed-button, button[class*="themed-button"], [class*="login"] button, [type="submit"]').forEach(el => {
-                    el.style.setProperty('background-color', 'rgb(31, 41, 55)', 'important');
-                    el.style.setProperty('color', 'rgb(255, 255, 255)', 'important');
-                    el.style.setProperty('border-color', 'rgb(31, 41, 55)', 'important');
-                    
-                    // 处理按钮内的所有文本元素
-                    el.querySelectorAll('*').forEach(text => {
-                      text.style.setProperty('color', 'rgb(255, 255, 255)', 'important');
-                    });
-                  });
-                } else {
-                  // 深色模式下的按钮样式
-                  document.querySelectorAll('.themed-button, button[class*="themed-button"], [class*="login"] button, [type="submit"]').forEach(el => {
-                    el.style.setProperty('background-color', 'rgb(229, 231, 235)', 'important');
-                    el.style.setProperty('color', 'rgb(31, 41, 55)', 'important');
-                    el.style.setProperty('border-color', 'rgb(229, 231, 235)', 'important');
-                    
-                    // 处理按钮内的所有文本元素
-                    el.querySelectorAll('*').forEach(text => {
-                      text.style.setProperty('color', 'rgb(31, 41, 55)', 'important');
-                    });
-                  });
-                }
-              });
-              
-              // 监视整个文档的子树变化
-              observer.observe(document.documentElement, {
-                childList: true,
-                subtree: true
-              });
-            }
           })();
         `
       }} />

@@ -23,7 +23,7 @@ export default function AdminAccess() {
     <>
       <button
         onClick={() => setShowPasswordModal(true)}
-        className="text-sm themed-text-tertiary hover:text-gray-700"
+        className="text-sm text-white hover:text-gray-700"
       >
         Admin Access
       </button>

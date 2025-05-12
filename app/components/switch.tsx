@@ -84,12 +84,6 @@ const Switch = () => {
       root.style.setProperty('--button-bg', 'rgb(229, 231, 235)', 'important'); // 浅灰色按钮
       root.style.setProperty('--button-text', 'rgb(31, 41, 55)', 'important'); // 深色文字
       
-      // 导航栏和页脚相关颜色
-      root.style.setProperty('--nav-text', 'rgb(243, 244, 246)', 'important');
-      root.style.setProperty('--footer-text', 'rgb(243, 244, 246)', 'important');
-      root.style.setProperty('--nav-bg', 'rgb(3, 7, 17)', 'important');
-      root.style.setProperty('--footer-bg', 'rgb(3, 7, 17)', 'important');
-      
       // 更新 meta 标签
       updateMetaTag(true);
     } else {
@@ -125,20 +119,9 @@ const Switch = () => {
       root.style.setProperty('--button-bg', 'rgb(31, 41, 55)', 'important'); // 黑色按钮
       root.style.setProperty('--button-text', 'rgb(255, 255, 255)', 'important'); // 白色文字
       
-      // 导航栏和页脚相关颜色
-      root.style.setProperty('--nav-text', 'rgb(31, 41, 55)', 'important');
-      root.style.setProperty('--footer-text', 'rgb(31, 41, 55)', 'important');
-      root.style.setProperty('--nav-bg', 'rgb(255, 255, 255)', 'important');
-      root.style.setProperty('--footer-bg', 'rgb(255, 255, 255)', 'important');
-      
       // 更新 meta 标签
       updateMetaTag(false);
     }
-    
-    // 直接应用样式到导航栏和页脚
-    applyThemeToElements('nav, .nav, [class*="nav"]', dark);
-    applyThemeToElements('footer, .footer, [class*="footer"]', dark);
-    applyThemeToElements('.login-page, [class*="login-page"], .login-form, .login-container', dark);
     
     // 处理登录页面特定元素
     const loginHeadings = document.querySelectorAll('h1[class*="login"], h2[class*="login"], h3[class*="login"], .login-heading, .login-title, [class*="login-heading"], [class*="login-title"]');
@@ -195,37 +178,6 @@ const Switch = () => {
     }, 0);
   };
   
-  // 直接应用样式到特定元素
-  const applyThemeToElements = (selector: string, dark: boolean) => {
-    const elements = document.querySelectorAll(selector);
-    elements.forEach(el => {
-      if (dark) {
-        (el as HTMLElement).style.setProperty('background-color', 'rgb(31, 41, 55)', 'important');
-        (el as HTMLElement).style.setProperty('color', 'rgb(243, 244, 246)', 'important');
-        
-        // 处理子元素中的文本颜色
-        const textElements = el.querySelectorAll('*');
-        textElements.forEach(text => {
-          (text as HTMLElement).style.setProperty('color', 'rgb(243, 244, 246)', 'important');
-        });
-      } else {
-        // 在浅色模式下特别设置导航栏和页脚为纯白色
-        if (selector.includes('nav') || selector.includes('footer')) {
-          (el as HTMLElement).style.setProperty('background-color', 'rgb(255, 255, 255)', 'important');
-        } else {
-          (el as HTMLElement).style.setProperty('background-color', 'rgb(243, 244, 246)', 'important');
-        }
-        (el as HTMLElement).style.setProperty('color', 'rgb(31, 41, 55)', 'important');
-        
-        // 处理子元素中的文本颜色
-        const textElements = el.querySelectorAll('*');
-        textElements.forEach(text => {
-          (text as HTMLElement).style.setProperty('color', 'rgb(31, 41, 55)', 'important');
-        });
-      }
-    });
-  };
-
   // Effect to apply the theme to the <html> element when isDark changes
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -235,21 +187,8 @@ const Switch = () => {
     const intervalId = setInterval(() => {
       if (localStorage.getItem('theme')) {
         applyTheme(localStorage.getItem('theme') === 'dark');
-        
-        // 额外的强制应用代码
-        const isCurrentlyDark = localStorage.getItem('theme') === 'dark';
-        if (!isCurrentlyDark) {
-          // 强制应用绿色到浅色模式的导航栏和页脚
-          document.querySelectorAll('nav, .nav, [class*="nav"], .themed-bg-secondary').forEach(el => {
-            (el as HTMLElement).style.setProperty('background-color', 'rgb(255, 255, 255)', 'important');
-          });
-          
-          document.querySelectorAll('footer, .footer, [class*="footer"], .themed-footer').forEach(el => {
-            (el as HTMLElement).style.setProperty('background-color', 'rgb(255, 255, 255)', 'important');
-          });
-        }
       }
-    }, 500);
+    }, 1000);
     
     return () => clearInterval(intervalId);
   }, [isDark]);
