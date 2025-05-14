@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1366" zoomAndPan="magnify" viewBox="0 0 1024.5 576" height="768" preserveAspectRatio="xMidYMid meet" version="1.0">
+  <style>
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .bg-object {
+      transform-origin: center;
+      animation: pulse 3s ease-in-out infinite;
+    }
+  </style>
+  <defs>
+    <filter x="0%" y="0%" width="100%" height="100%" id="c38c61717a">
+      <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0" color-interpolation-filters="sRGB"/>
+    </filter>
+    <mask id="85b56020c2">
+      <g filter="url(#c38c61717a)">
+        <rect x="-102.45" width="1229.4" fill="#000000" y="-57.6" height="691.2" fill-opacity="0.25"/>
+      </g>
+    </mask>
+  </defs>
+  <g mask="url(#85b56020c2)">
+    <g transform="matrix(1, 0, 0, 1, 0, 212)" class="bg-object">
+      <rect x="-36.28125" y="1.128906" width="119.574219" height="119.574219" fill="#b51e3e"/>
+    </g>
+  </g>
+  <g mask="url(#c41de2a897)">
+    <g transform="matrix(1, 0, 0, 1, 43, 251)" class="bg-object">
+      <rect x="14.570312" y="14.289062" width="134.828126" height="134.828126" fill="#ffffff"/>
+      <rect x="14.570312" y="14.289062" width="134.828126" height="134.828126" fill="none" stroke="#b51e3e" stroke-width="8"/>
+    </g>
+  </g>
+  <g mask="url(#9529e91259)">
+    <g transform="matrix(1, 0, 0, 1, 0, 334)" class="bg-object">
+      <rect x="5.421875" y="14.007812" width="119.574219" height="119.574219" fill="#ffffff"/>
+      <circle cx="65.210938" cy="73.792969" r="59.750731" fill="none" stroke="#b51e3e" stroke-width="8"/>
+    </g>
+  </g>
+  <g mask="url(#96d9feba78)">
+    <g transform="matrix(1, 0, 0, 1, 69, 348)" class="bg-object">
+      <rect x="14.296875" y="14.144531" width="134.839844" height="134.820313" fill="none" stroke="#b51e3e" stroke-width="8"/>
+    </g>
+  </g>
+  <g mask="url(#617c4f2f76)">
+    <g transform="matrix(1, 0, 0, 1, 170, 400)" class="bg-object">
+      <rect x="0.4375" y="0.117188" width="95.417969" height="95.421874" fill="#b51e3e"/>
+    </g>
+  </g>
+  <g clip-path="url(#483532cf7c)">
+    <g mask="url(#8b7d1cb41d)">
+      <g transform="matrix(1, 0, 0, 1, 116, 454)" class="bg-object">
+        <rect x="13.105469" y="13.582031" width="273.5" height="273.496094" fill="#ffffff"/>
+        <circle cx="149.855469" cy="150.332031" r="136.421698" fill="none" stroke="#b51e3e" stroke-width="8"/>
+      </g>
+    </g>
+  </g>
+  <g mask="url(#cc4cb81e44)">
+    <g transform="matrix(1, 0, 0, 1, 311, 380)" class="bg-object">
+      <rect x="0.582031" y="0.535156" width="76.664063" height="76.664063" fill="#b51e3e"/>
+    </g>
+  </g>
+  <g clip-path="url(#2fef4f35d9)">
+    <g mask="url(#d298975ebb)">
+      <g transform="matrix(1, 0, 0, 1, 225, 414)" class="bg-object">
+        <rect x="14.617188" y="14.125" width="134.828124" height="134.828125" fill="#ffffff"/>
+        <rect x="14.617188" y="14.125" width="134.828124" height="134.828125" fill="none" stroke="#b51e3e" stroke-width="8"/>
+      </g>
+    </g>
+  </g>
+  <g clip-path="url(#2dd01e73c1)">
+    <g mask="url(#cdbf9c3514)">
+      <g transform="matrix(1, 0, 0, 1, 549, 510)" class="bg-object">
+        <rect x="14.433594" y="14.492188" width="93.023437" height="91.941406" fill="#b51e3e"/>
+        <rect x="14.433594" y="14.492188" width="93.023437" height="91.941406" fill="none" stroke="#b51e3e" stroke-width="8"/>
+      </g>
+    </g>
+  </g>
+  <g clip-path="url(#2b1162a06c)">
+    <g mask="url(#b969a7ac6d)">
+      <g transform="matrix(1, 0, 0, 1, 307, 507)" class="bg-object">
+        <rect x="0.1875" y="0.03125" width="95.417969" height="95.417969" fill="#b51e3e"/>
+      </g>
+    </g>
+  </g>
+  <g clip-path="url(#d3642d51ff)">
+    <g mask="url(#8f5749c5d7)">
+      <g transform="matrix(1, 0, 0, 1, 623, 434)" class="bg-object">
+        <rect x="14.226562" y="13.828125" width="115.878906" height="128.03125" fill="none" stroke="#b51e3e" stroke-width="8"/>
+      </g>
+    </g>
+  </g>
+  <g clip-path="url(#3e80236534)">
+    <g mask="url(#87ff446f13)">
+      <g transform="matrix(1, 0, 0, 1, 736, 386)" class="bg-object">
+        <rect x="14.101562" y="13.609375" width="216.222657" height="216.222656" fill="#b51e3e"/>
+        <rect x="14.101562" y="13.609375" width="216.222657" height="216.222656" fill="none" stroke="#b51e3e" stroke-width="8"/>
+      </g>
+    </g>
+  </g>
+  <g clip-path="url(#7b7a40e83a)">
+    <g class="bg-object">
+      <rect x="766.042969" y="414.769531" width="184.523437" height="184.523438" fill="#ffffff"/>
+      <circle cx="858.304688" cy="507.03125" r="123.069686" fill="none" stroke="#b51e3e" stroke-width="8"/>
+    </g>
+  </g>
+  <g clip-path="url(#5ccf3bc37a)">
+    <g mask="url(#faa184bf12)">
+      <g transform="matrix(1, 0, 0, 1, 375, 435)" class="bg-object">
+        <rect x="12.902344" y="12.828125" width="192.441406" height="192.441406" fill="#ffffff"/>
+        <circle cx="109.125" cy="109.046875" r="128.351957" fill="none" stroke="#b51e3e" stroke-width="8"/>
+      </g>
+    </g>
+  </g>
+  <g mask="url(#7d22f0f1dd)">
+    <g transform="matrix(1, 0, 0, 1, 342, 434)" class="bg-object">
+      <rect x="13.734375" y="13.976562" width="76.664063" height="76.664063" fill="#ffffff"/>
+      <rect x="13.734375" y="13.976562" width="76.664063" height="76.664063" fill="none" stroke="#b51e3e" stroke-width="8"/>
+    </g>
+  </g>
+</svg>
