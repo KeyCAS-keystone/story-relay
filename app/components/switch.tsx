@@ -199,6 +199,8 @@ const Switch = () => {
     // Persist the user's manual choice in localStorage
     if (typeof window !== 'undefined') {
       localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
+      // Dispatch custom event for theme change
+      document.dispatchEvent(new CustomEvent('themeChanged'));
     }
   };
 

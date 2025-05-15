@@ -42,6 +42,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
   const scrollStopTimeoutId = useRef<NodeJS.Timeout | null>(null);
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     const updateLayoutMetrics = () => {
@@ -57,6 +58,29 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
     updateLayoutMetrics();
     window.addEventListener('resize', updateLayoutMetrics);
     return () => window.removeEventListener('resize', updateLayoutMetrics);
+  }, []);
+
+  useEffect(() => {
+    // Check theme from localStorage
+    const checkTheme = () => {
+      const theme = localStorage.getItem('theme');
+      setIsDarkMode(theme === 'dark');
+    };
+
+    // Initial check
+    checkTheme();
+
+    // Listen for theme changes
+    const handleThemeChange = () => {
+      checkTheme();
+    };
+
+    // Add event listener for theme changes
+    document.addEventListener('themeChanged', handleThemeChange);
+
+    return () => {
+      document.removeEventListener('themeChanged', handleThemeChange);
+    };
   }, []);
 
   const calculateConnectionLines = useCallback(() => {
@@ -314,20 +338,21 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
   return (
     <>
       {/* BackgroundPattern 最外层，保证在所有内容之下 */}
-      <div
-        style={{
-          position: 'fixed',
-          left: 45,
-          right: 0,
-          bottom: 0,
-          height: '820px', // 保证底部对齐，SVG高度
-          zIndex: -1, // 确保在最底层
-          pointerEvents: 'none',
-          backgroundColor: 'transparent',
-        }}
-      >
-        <BackgroundPattern />
-      </div>
+      {!isDarkMode && (
+        <div
+          style={{
+            position: 'fixed',
+            left: '45px',    // Start 45px from the left viewport edge
+            right: '0px',    // Extend to the right viewport edge
+            bottom: '0px',
+            height: '820px', // Keep defined height
+            zIndex: -1,
+            pointerEvents: 'none',
+          }}
+        >
+          <BackgroundPattern />
+        </div>
+      )}
       {/* Left gold border (outermost) */}
       <div
         style={{
