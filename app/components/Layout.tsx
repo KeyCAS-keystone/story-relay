@@ -7,9 +7,10 @@ import Loader from './Loader';
 
 interface LayoutProps {
   children: React.ReactNode;
+  hideNavAndFooter?: boolean;
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children, hideNavAndFooter }: LayoutProps) {
   const { user, loading, signOut, avatarUrl } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -84,17 +85,20 @@ export default function Layout({ children }: LayoutProps) {
 
       <div className="min-h-screen bg-transparent flex flex-col">
         {/* Top gold border */}
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '8px',
-            backgroundColor: '#EFB32C',
-            zIndex: 1000
-          }}
-        />
+        {!hideNavAndFooter && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '8px',
+              backgroundColor: '#EFB32C',
+              zIndex: 1000
+            }}
+          />
+        )}
+        {!hideNavAndFooter && (
         <nav className="relative" style={{ 
           backgroundColor: 'var(--nav-bg)', 
           color: 'var(--nav-text)', 
@@ -197,23 +201,24 @@ export default function Layout({ children }: LayoutProps) {
             </div>
           </div>
         </nav>
-
+        )}
         <main className="flex-grow max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 relative z-10">
           {children}
         </main>
-
         {/* Bottom gold border */}
-        <div
-          style={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '8px',
-            backgroundColor: '#EFB32C',
-            zIndex: 1000
-          }}
-        />
+        {!hideNavAndFooter && (
+          <div
+            style={{
+              position: 'fixed',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '8px',
+              backgroundColor: '#EFB32C',
+              zIndex: 1000
+            }}
+          />
+        )}
       </div>
     </>
   );

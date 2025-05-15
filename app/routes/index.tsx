@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { supabase } from '../lib/supabase';
-import StoryTree from '../components/StoryTree';
 import TermsModal from '../components/TermsModal';
 import Loader from '../components/Loader';
+import Cover from '../components/cover';
+import StoryTree from '../components/StoryTree';
 
 interface Node {
   id: string;
@@ -22,6 +23,8 @@ export default function Home() {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showCover, setShowCover] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
     fetchNodes();
@@ -80,36 +83,90 @@ export default function Home() {
     }
   };
 
-  if (loading) {
-    return (
-      <Layout>
-        <div className="flex justify-center items-center h-64">
-          <Loader />
-        </div>
-      </Layout>
-    );
-  }
-
-  if (error) {
-    return (
-      <Layout>
-        <div className="text-red-600">{error}</div>
-      </Layout>
-    );
-  }
+  const handleSwipe = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setTimeout(() => {
+      setShowCover(false);
+      setIsAnimating(false);
+    }, 500);
+  };
 
   return (
     <>
       <TermsModal />
-      <Layout>
-        <div className="w-full">
-          {nodes.length === 0 ? (
-            <p className="text-gray-500 text-center">No stories yet. Be the first to start!</p>
+      <div style={{ position: 'relative', height: '100vh' }}>
+        {/* Main Content - Always render but conditionally show content */}
+        <Layout>
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <Loader />
+            </div>
+          ) : error ? (
+            <div className="text-red-600">{error}</div>
           ) : (
             <StoryTree nodes={nodes} />
           )}
-        </div>
-      </Layout>
+        </Layout>
+
+        {/* Cover Overlay - Always show initially */}
+        {showCover && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 2000,
+            }}
+            onWheel={(e) => {
+              if (Math.abs(e.deltaY) > 30) {
+                handleSwipe();
+              }
+            }}
+            onTouchStart={(e) => {
+              const touch = e.touches[0];
+              const startY = touch.clientY;
+              
+              const handleTouchMove = (e: TouchEvent) => {
+                const touch = e.touches[0];
+                const deltaY = touch.clientY - startY;
+                if (Math.abs(deltaY) > 30) {
+                  handleSwipe();
+                  document.removeEventListener('touchmove', handleTouchMove);
+                  document.removeEventListener('touchend', handleTouchEnd);
+                }
+              };
+              
+              const handleTouchEnd = () => {
+                document.removeEventListener('touchmove', handleTouchMove);
+                document.removeEventListener('touchend', handleTouchEnd);
+              };
+              
+              document.addEventListener('touchmove', handleTouchMove);
+              document.addEventListener('touchend', handleTouchEnd);
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                transform: isAnimating ? 'translateY(-100%)' : 'translateY(0)',
+                opacity: isAnimating ? 0 : 1,
+                transition: 'transform 0.5s ease-out, opacity 0.5s ease-out',
+                touchAction: 'none',
+                WebkitOverflowScrolling: 'touch',
+              }}
+            >
+              <Cover onHide={() => setShowCover(false)} />
+            </div>
+          </div>
+        )}
+      </div>
     </>
   );
 } 
