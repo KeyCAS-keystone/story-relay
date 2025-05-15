@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import AdminAccess from './AdminAccess';
+import BackgroundPattern from './background';
 
 interface Node {
   id: string;
@@ -312,6 +313,21 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
 
   return (
     <>
+      {/* BackgroundPattern 最外层，保证在所有内容之下 */}
+      <div
+        style={{
+          position: 'fixed',
+          left: 45,
+          right: 0,
+          bottom: 0,
+          height: '820px', // 保证底部对齐，SVG高度
+          zIndex: -1,
+          pointerEvents: 'none',
+          backgroundColor: 'transparent',
+        }}
+      >
+        <BackgroundPattern />
+      </div>
       {/* Left gold border (outermost) */}
       <div
         style={{
