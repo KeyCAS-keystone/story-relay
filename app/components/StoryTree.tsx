@@ -135,8 +135,9 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
       
       // Update card positions
       setCardPositions(newPositions);
-      
-      // Calculate connection lines immediately after position update
+    };
+
+    const updateConnectionLines = () => {
       if (svgRef.current && contentWrapperRef.current && cardRefs.current.size > 0) {
         const svgRect = svgRef.current.getBoundingClientRect();
         const lines: ConnectionLine[] = [];
@@ -176,10 +177,14 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
       animationFrameId.current = requestAnimationFrame(performCardPositionUpdate);
     };
 
+    // Set up interval for connection lines update
+    const intervalId = setInterval(updateConnectionLines, 200);
+
     (window as any).__requestPositionUpdate = requestPositionUpdate;
 
     // Initial update
     requestPositionUpdate();
+    updateConnectionLines();
 
     const scroller = containerRef.current;
     if (scroller) {
@@ -194,6 +199,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
+      clearInterval(intervalId);
       delete (window as any).__requestPositionUpdate;
     };
   }, [nodes]);
