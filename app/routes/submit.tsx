@@ -235,6 +235,30 @@ export default function Submit() {
           alignItems: 'center'
         }}
       >
+        {/* Left gold border */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '8px',
+            height: '45px',
+            backgroundColor: '#EFB32C',
+            zIndex: 1010
+          }}
+        />
+        {/* Right gold border */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: '8px',
+            height: '45px',
+            backgroundColor: '#EFB32C',
+            zIndex: 1010
+          }}
+        />
         <div className="w-full px-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4 pl-12">
