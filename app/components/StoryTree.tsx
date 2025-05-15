@@ -133,11 +133,40 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
         }
       });
       
-      // Removed the redundant direct calculation and setting of connectionLines here.
-      // The useEffect hook that depends on cardPositions will handle this.
-      
-      // 最后更新位置状态
+      // Update card positions
       setCardPositions(newPositions);
+      
+      // Calculate connection lines immediately after position update
+      if (svgRef.current && contentWrapperRef.current && cardRefs.current.size > 0) {
+        const svgRect = svgRef.current.getBoundingClientRect();
+        const lines: ConnectionLine[] = [];
+        nodes.forEach(node => {
+          if (!node.parent_id) return;
+          const childElement = cardRefs.current.get(node.id);
+          const parentElement = cardRefs.current.get(node.parent_id);
+          if (!childElement || !parentElement) return;
+          const childRect = childElement.getBoundingClientRect();
+          const parentRect = parentElement.getBoundingClientRect();
+          const parentX = parentRect.left + parentRect.width / 2 - svgRect.left;
+          const parentY = parentRect.bottom - svgRect.top;
+          const childX = childRect.left + childRect.width / 2 - svgRect.left;
+          const childY = childRect.top - svgRect.top;
+          const midY = (parentY + childY) / 2;
+          const curveRadius = 20;
+          
+          const isChildOnLeft = childX < parentX;
+          
+          const path = `M${parentX},${parentY} 
+                       L${parentX},${midY - curveRadius} 
+                       Q${parentX},${midY} ${isChildOnLeft ? parentX - curveRadius : parentX + curveRadius},${midY} 
+                       L${isChildOnLeft ? childX + curveRadius : childX - curveRadius},${midY} 
+                       Q${childX},${midY} ${childX},${midY + curveRadius} 
+                       L${childX},${childY}`;
+          
+          lines.push({ parentId: node.parent_id, childId: node.id, path });
+        });
+        setConnectionLines(lines);
+      }
     };
 
     const requestPositionUpdate = () => {
@@ -149,7 +178,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
 
     (window as any).__requestPositionUpdate = requestPositionUpdate;
 
-    // 初始化时立即请求更新
+    // Initial update
     requestPositionUpdate();
 
     const scroller = containerRef.current;
