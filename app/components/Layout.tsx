@@ -76,7 +76,7 @@ export default function Layout({ children }: LayoutProps) {
       <div 
         className="fixed inset-0 w-full h-full" 
         style={{ 
-          zIndex: -1, 
+          zIndex: -100, 
           backgroundColor: isDarkMode ? 'rgb(3, 7, 18)' : 'rgb(243, 244, 246)',
           transition: 'background-color 0.3s ease'
         }}
@@ -92,17 +92,45 @@ export default function Layout({ children }: LayoutProps) {
             right: 0,
             height: '8px',
             backgroundColor: '#EFB32C',
-            zIndex: 101
+            zIndex: 1000
           }}
         />
-        <nav className="shadow-lg relative z-10" style={{ 
+        <nav className="relative" style={{ 
           backgroundColor: 'var(--nav-bg)', 
           color: 'var(--nav-text)', 
           height: '45px', 
           display: 'flex', 
           alignItems: 'center',
-          marginTop: '8px'
+          marginTop: '8px',
+          zIndex: 100
         }}>
+          {/* Left gold border for navbar */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '8px',
+              height: '45px',
+              backgroundColor: '#EFB32C',
+              zIndex: 1010
+            }}
+          />
+          {/* Right gold border for navbar */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: '8px',
+              height: '45px',
+              backgroundColor: '#EFB32C',
+              zIndex: 1010
+            }}
+          />
+          {/* Middle shadow for navbar, not covering gold borders */}
+          <div
+          />
           <div className="w-full px-8">
             <div className="flex justify-between items-center">
               <div className="flex items-center">
@@ -183,7 +211,7 @@ export default function Layout({ children }: LayoutProps) {
             right: 0,
             height: '8px',
             backgroundColor: '#EFB32C',
-            zIndex: 101
+            zIndex: 1000
           }}
         />
       </div>

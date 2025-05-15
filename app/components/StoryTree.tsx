@@ -321,7 +321,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
           right: 0,
           bottom: 0,
           height: '820px', // 保证底部对齐，SVG高度
-          zIndex: -1,
+          zIndex: -1, // 确保在最底层
           pointerEvents: 'none',
           backgroundColor: 'transparent',
         }}
@@ -337,7 +337,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
           width: '8px',
           height: '100vh',
           backgroundColor: '#EFB32C',
-          zIndex: 100
+          zIndex: 1000 // 提高金色边框的层级
         }}
       />
       {/* Right gold border (outermost) */}
@@ -349,7 +349,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
           width: '8px',
           height: '100vh',
           backgroundColor: '#EFB32C',
-          zIndex: 100
+          zIndex: 1000 // 提高金色边框的层级
         }}
       />
       {/* Left red area (between gold and content) */}
@@ -361,7 +361,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
           width: '45px',
           height: '100vh',
           backgroundColor: '#CD1D43',
-          zIndex: 99
+          zIndex: 999 // 提高红色区域的层级
         }}
       />
       {/* Right red area (between gold and content) */}
@@ -373,7 +373,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
           width: '45px',
           height: '100vh',
           backgroundColor: '#CD1D43',
-          zIndex: 99
+          zIndex: 999 // 提高红色区域的层级
         }}
       />
       {/* Left red border */}
@@ -385,7 +385,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
           width: '2px',
           height: '100vh',
           backgroundColor: '#CD1D43',
-          zIndex: 100
+          zIndex: 1000 // 提高红色边框的层级
         }}
       />
       {/* Right red border */}
@@ -397,7 +397,7 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
           width: '2px',
           height: '100vh',
           backgroundColor: '#CD1D43',
-          zIndex: 100
+          zIndex: 1000 // 提高红色边框的层级
         }}
       />
       {/* Main content container */}
@@ -413,6 +413,19 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
           zIndex: 12
         }}
       >
+        {/* Top shadow just below navbar, above cards */}
+        <div
+          style={{
+            position: 'absolute',
+            top: -15,
+            left: 0,
+            right: 0,
+            height: '14px',
+            pointerEvents: 'none',
+            boxShadow: '0 4px 16px 0 rgba(0,0,0,0.22)',
+            zIndex: 13
+          }}
+        />
         {/* Up/Down scroll buttons */}
         <div
           style={{

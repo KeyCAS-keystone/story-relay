@@ -302,7 +302,7 @@ const SVGComponent: React.FC<SVGComponentProps> = (props) => (
       </clipPath>
       <clipPath id="2dd01e73c1">
         <path
-          d="M 549 510 L 669 510 L 669 575.859375 L 549 575.859375 Z M 549 510 "
+          d="M 549 510 L 669 510 L 669 630 L 549 630 Z M 549 510 "
           clipRule="nonzero"
         />
       </clipPath>
@@ -320,7 +320,7 @@ const SVGComponent: React.FC<SVGComponentProps> = (props) => (
       </mask>
       <clipPath id="38428b86ac">
         <path
-          d="M 14.433594 14.492188 L 107.476562 14.492188 L 107.476562 65.859375 L 14.433594 65.859375 Z M 14.433594 14.492188 "
+          d="M 14.433594 14.492188 L 107.457031 14.492188 L 107.457031 107.457031 L 14.433594 107.457031 Z M 14.433594 14.492188 "
           clipRule="nonzero"
         />
       </clipPath>
@@ -706,12 +706,12 @@ const SVGComponent: React.FC<SVGComponentProps> = (props) => (
     </g>
     <g clipPath="url(#2dd01e73c1)" className="animate-scale4 scale4-2">
       <g mask="url(#cdbf9c3514)">
-        <g transform="matrix(1, 0, 0, 1, 549, 510)">
+        <g transform="matrix(1, 0, 0, 1, 549, 515)">
           <g clipPath="url(#c83cdd4f0c)">
             <g clipPath="url(#38428b86ac)">
               <path
                 fill="#b51e3e"
-                d="M 14.433594 14.492188 L 107.457031 14.492188 L 107.457031 106.433594 L 14.433594 106.433594 Z M 14.433594 14.492188 "
+                d="M 14.433594 14.492188 L 107.457031 14.492188 L 107.457031 107.457031 L 14.433594 107.457031 Z M 14.433594 14.492188 "
                 fillOpacity={1}
                 fillRule="nonzero"
               />
