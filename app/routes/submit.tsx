@@ -45,6 +45,8 @@ export default function Submit() {
     }
     return '';
   });
+  const [wordCount, setWordCount] = useState(0);
+  const [dailyWordCount, setDailyWordCount] = useState(0);
 
   useEffect(() => {
     if (location.state?.parentNodeId) {
@@ -63,6 +65,40 @@ export default function Submit() {
   useEffect(() => {
     fetchParentNodes();
   }, []);
+
+  useEffect(() => {
+    // 计算当前输入的字数
+    const count = content.trim().split(/\s+/).length;
+    setWordCount(count);
+  }, [content]);
+
+  useEffect(() => {
+    // 获取用户今日已使用的字数
+    const fetchDailyWordCount = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('daily_word_count, last_submission_date')
+          .eq('id', user.id)
+          .single();
+
+        if (error) throw error;
+
+        const today = new Date().toISOString().split('T')[0];
+        if (data.last_submission_date === today) {
+          setDailyWordCount(data.daily_word_count);
+        } else {
+          setDailyWordCount(0);
+        }
+      } catch (error) {
+        console.error('Error fetching daily word count:', error);
+      }
+    };
+
+    fetchDailyWordCount();
+  }, [user]);
 
   const fetchParentNodes = async () => {
     try {
@@ -232,14 +268,26 @@ export default function Submit() {
             <label htmlFor="content" className="block text-sm font-medium themed-label">
               Your Story (1-5 sentences)
             </label>
-            <textarea
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={4}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white themed-input"
-              required
-            />
+            <div className="relative">
+              <textarea
+                id="content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                rows={4}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white themed-input"
+                required
+              />
+              <div className="absolute bottom-2 right-2 text-sm text-gray-500">
+                <span className={wordCount + dailyWordCount > 500 ? 'text-red-500' : ''}>
+                  {wordCount} words
+                </span>
+                {dailyWordCount > 0 && (
+                  <span className="ml-2">
+                    (Today: {dailyWordCount + wordCount}/500)
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
 
           <div>
