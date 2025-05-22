@@ -4,7 +4,9 @@ CREATE TABLE users (
     email TEXT UNIQUE NOT NULL,
     username TEXT UNIQUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
-    is_admin BOOLEAN DEFAULT FALSE NOT NULL
+    is_admin BOOLEAN DEFAULT FALSE NOT NULL,
+    daily_word_count INTEGER DEFAULT 0 NOT NULL,
+    last_submission_date DATE DEFAULT CURRENT_DATE NOT NULL
 );
 
 -- Create nodes table

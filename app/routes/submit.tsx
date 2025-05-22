@@ -93,6 +93,40 @@ export default function Submit() {
     setSuccess(false);
 
     try {
+      // 检查用户今日提交字数
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('daily_word_count, last_submission_date')
+        .eq('id', user.id)
+        .single();
+
+      if (userError) throw userError;
+
+      const today = new Date().toISOString().split('T')[0];
+      const lastSubmissionDate = userData.last_submission_date;
+      
+      // 如果是新的一天，重置字数计数
+      if (lastSubmissionDate !== today) {
+        const { error: resetError } = await supabase
+          .from('users')
+          .update({
+            daily_word_count: 0,
+            last_submission_date: today
+          })
+          .eq('id', user.id);
+        
+        if (resetError) throw resetError;
+        userData.daily_word_count = 0;
+      }
+
+      // 计算当前提交的字数
+      const wordCount = content.trim().split(/\s+/).length;
+      const newTotalCount = userData.daily_word_count + wordCount;
+
+      if (newTotalCount > 500) {
+        throw new Error(`You have exceeded the daily limit of 500 words. You have used ${userData.daily_word_count} words today, and this submission would add ${wordCount} more words.`);
+      }
+
       const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
       if (sentences.length < 1 || sentences.length > 5) {
         throw new Error('Please write 1-5 sentences');
@@ -116,6 +150,17 @@ export default function Submit() {
         throw new Error('This story branch has reached its maximum number of continuations (5)');
       }
 
+      // 更新用户字数计数
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({
+          daily_word_count: newTotalCount,
+          last_submission_date: today
+        })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+
       const { error: submitError } = await supabase
         .from('submissions')
         .insert({
@@ -137,8 +182,8 @@ export default function Submit() {
       setContent('');
       setSummary('');
       setSelectedNodeId('');
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
     } catch (error) {
+      console.error('Error submitting story:', error);
       setError(error instanceof Error ? error.message : 'Failed to submit story');
     } finally {
       setLoading(false);
