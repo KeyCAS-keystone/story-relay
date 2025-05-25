@@ -578,7 +578,19 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
                           Write from here
                         </button>
                       </div>
-                      <div className="mb-4 text-base leading-relaxed">{node.content}</div>
+                      <div 
+                        className="mb-4 text-base leading-relaxed whitespace-pre-wrap"
+                        style={{ 
+                          lineHeight: '1.8',
+                          marginBottom: '0.5rem'
+                        }}
+                      >
+                        {node.content.split('\n').map((paragraph, index) => (
+                          <p key={index} style={{ marginBottom: '0.5rem' }}>
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
                       <button 
                         onClick={() => handleWriteFromHere(node.id)}
                         className={`${buttonClasses} mt-4 self-center`}
@@ -617,7 +629,19 @@ export default function StoryTree({ nodes }: StoryTreeProps) {
                           Write from here
                         </button>
                       </div>
-                      <div className="mb-4 text-base leading-relaxed">{node.content}</div>
+                      <div 
+                        className="mb-4 text-base leading-relaxed whitespace-pre-wrap"
+                        style={{ 
+                          lineHeight: '1.8',
+                          marginBottom: '0.4rem'
+                        }}
+                      >
+                        {node.content.split('\n').map((paragraph, index) => (
+                          <p key={index} style={{ marginBottom: '0.5rem' }}>
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
                       <button 
                         onClick={() => handleWriteFromHere(node.id)}
                         className={`${buttonClasses} mt-4 self-center`}
