@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import { supabase } from '../lib/supabase';
 import { Dialog, Transition } from '@headlessui/react';
 import Loader from '../components/Loader';
+import emailjs from '@emailjs/browser';
 
 interface Node {
   id: string;
@@ -23,7 +24,10 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-  const rowRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const [rejectReason, setRejectReason] = useState('');
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [nodeToReject, setNodeToReject] = useState<Node | null>(null);
+  const rowRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
   const [scrollToggles, setScrollToggles] = useState(0); // 用于强制刷新连线
 
   useEffect(() => {
@@ -218,32 +222,12 @@ export default function Admin() {
             }
         }
 
-      } else if (newStatus === 'rejected') {
-        console.log('[Admin] Rejecting node:', nodeId, 'Current status:', nodeToReview.status);
-        if (nodeToReview.status === 'pending') {
-          console.log('[Admin] Deleting pending submission from submissions table:', nodeId);
-          const { error: deleteError } = await supabase
-            .from('submissions')
-            .delete()
-            .eq('id', nodeId);
-          if (deleteError) {
-            console.error('[Admin] Error deleting pending submission:', deleteError);
-            throw deleteError;
-          }
-          console.log('[Admin] Successfully deleted pending submission:', nodeId);
-        } else {
-          // Item was already in 'nodes' (e.g. an approved node being re-rejected)
-          console.log('[Admin] Updating node status to rejected in nodes table:', nodeId);
-          const { error: updateError } = await supabase
-          .from('nodes')
-            .update({ status: 'rejected' })
-            .eq('id', nodeId);
-          if (updateError) {
-            console.error('[Admin] Error updating node to rejected:', updateError);
-            throw updateError;
-          }
-          console.log('[Admin] Successfully updated node to rejected:', nodeId);
-        }
+      } else {
+        // For rejection, show the reject reason dialog
+        setNodeToReject(nodeToReview);
+        setShowRejectDialog(true);
+        setLoading(false);
+        return;
       }
 
       console.log('[Admin] Review process completed for nodeId:', nodeId, '. Fetching updated nodes.');
@@ -252,6 +236,71 @@ export default function Admin() {
     } catch (error) {
       console.error('[Admin] Error in handleReview function:', error);
       setError(error instanceof Error ? error.message : 'Failed to process review. Check console for details.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRejectConfirm = async () => {
+    if (!nodeToReject || !rejectReason.trim()) {
+      setError('Please provide a reason for rejection');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError('');
+
+      // Send rejection email
+      const templateParams = {
+        to_email: nodeToReject.author_email,
+        to_name: nodeToReject.author_username || nodeToReject.author_email,
+        rejection_reason: rejectReason,
+        story_content: nodeToReject.content,
+        story_summary: nodeToReject.summary
+      };
+
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      // Process the rejection
+      if (nodeToReject.status === 'pending') {
+        console.log('[Admin] Deleting pending submission from submissions table:', nodeToReject.id);
+        const { error: deleteError } = await supabase
+          .from('submissions')
+          .delete()
+          .eq('id', nodeToReject.id);
+        if (deleteError) {
+          console.error('[Admin] Error deleting pending submission:', deleteError);
+          throw deleteError;
+        }
+        console.log('[Admin] Successfully deleted pending submission:', nodeToReject.id);
+      } else {
+        console.log('[Admin] Updating node status to rejected in nodes table:', nodeToReject.id);
+        const { error: updateError } = await supabase
+          .from('nodes')
+          .update({ status: 'rejected' })
+          .eq('id', nodeToReject.id);
+        if (updateError) {
+          console.error('[Admin] Error updating node to rejected:', updateError);
+          throw updateError;
+        }
+        console.log('[Admin] Successfully updated node to rejected:', nodeToReject.id);
+      }
+
+      // Reset states and refresh nodes
+      setShowRejectDialog(false);
+      setRejectReason('');
+      setNodeToReject(null);
+      await fetchNodes();
+
+    } catch (error) {
+      console.error('[Admin] Error in handleRejectConfirm:', error);
+      setError(error instanceof Error ? error.message : 'Failed to process rejection. Check console for details.');
     } finally {
       setLoading(false);
     }
@@ -447,6 +496,80 @@ export default function Admin() {
                         onClick={() => setSelectedNode(null)}
                       >
                         Close
+                      </button>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </Dialog>
+        </Transition.Root>
+
+        {/* Reject Reason Dialog */}
+        <Transition.Root show={showRejectDialog} as={Fragment}>
+          <Dialog as="div" className="relative z-50" onClose={() => setShowRejectDialog(false)}>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+            </Transition.Child>
+
+            <div className="fixed inset-0 z-10 overflow-y-auto">
+              <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                  enterTo="opacity-100 translate-y-0 sm:scale-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                  leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                >
+                  <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                    <div>
+                      <div className="mt-3 text-center sm:mt-5">
+                        <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
+                          Reject Submission
+                        </Dialog.Title>
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-500">
+                            Please provide a reason for rejecting this submission. This reason will be sent to the author.
+                          </p>
+                          <textarea
+                            value={rejectReason}
+                            onChange={(e) => setRejectReason(e.target.value)}
+                            className="mt-4 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            rows={4}
+                            placeholder="Enter rejection reason..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                      <button
+                        type="button"
+                        className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
+                        onClick={handleRejectConfirm}
+                        disabled={loading}
+                      >
+                        {loading ? 'Processing...' : 'Confirm Rejection'}
+                      </button>
+                      <button
+                        type="button"
+                        className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+                        onClick={() => {
+                          setShowRejectDialog(false);
+                          setRejectReason('');
+                          setNodeToReject(null);
+                        }}
+                      >
+                        Cancel
                       </button>
                     </div>
                   </Dialog.Panel>
