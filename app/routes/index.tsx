@@ -31,55 +31,79 @@ export default function Home() {
   }, []);
 
   const fetchNodes = async () => {
-    try {
-      setLoading(true);
-      setError('');
+    const MAX_RETRIES = 3;
+    const TIMEOUT_MS = 10000; // 10 seconds timeout
+    let retryCount = 0;
 
-      const { data, error } = await supabase
-        .from('nodes')
-        .select('*')
-        .eq('status', 'approved')
-        .order('created_at', { ascending: false });
+    const fetchWithTimeout = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('nodes')
+          .select('*')
+          .eq('status', 'approved')
+          .order('created_at', { ascending: false });
 
-      if (error) throw error;
+        if (error) throw error;
+        return data;
+      } catch (error) {
+        throw error;
+      }
+    };
 
-      // Create a map of all nodes for quick lookup
-      const nodeMap = new Map((data || []).map(node => [node.id, node]));
-      
-      // Calculate levels in memory
-      const nodesWithLevel = (data || []).map(node => {
-        let level = 1;
-        let currentParentId = node.parent_id;
-        const visited = new Set<string>(); // Prevent circular references
+    while (retryCount < MAX_RETRIES) {
+      try {
+        setLoading(true);
+        setError('');
+
+        const data = await fetchWithTimeout();
+
+        // Create a map of all nodes for quick lookup
+        const nodeMap = new Map((data || []).map(node => [node.id, node]));
         
-        while (currentParentId) {
-          if (visited.has(currentParentId)) {
-            console.warn('Circular reference detected for node:', node.id);
-            break;
-          }
-          visited.add(currentParentId);
+        // Calculate levels in memory
+        const nodesWithLevel = (data || []).map(node => {
+          let level = 1;
+          let currentParentId = node.parent_id;
+          const visited = new Set<string>(); // Prevent circular references
           
-          const parentNode = nodeMap.get(currentParentId);
-          if (parentNode) {
-            level++;
-            currentParentId = parentNode.parent_id;
-          } else {
-            break;
+          while (currentParentId) {
+            if (visited.has(currentParentId)) {
+              console.warn('Circular reference detected for node:', node.id);
+              break;
+            }
+            visited.add(currentParentId);
+            
+            const parentNode = nodeMap.get(currentParentId);
+            if (parentNode) {
+              level++;
+              currentParentId = parentNode.parent_id;
+            } else {
+              break;
+            }
           }
+
+          return {
+            ...node,
+            level
+          };
+        });
+
+        setNodes(nodesWithLevel);
+        setLoading(false);
+        return; // Success, exit the retry loop
+      } catch (error) {
+        retryCount++;
+        console.error(`Error fetching nodes (attempt ${retryCount}/${MAX_RETRIES}):`, error);
+        
+        if (retryCount === MAX_RETRIES) {
+          setError('Failed to load stories. Please try refreshing the page.');
+          setLoading(false);
+        } else {
+          // Wait before retrying (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000));
+          continue;
         }
-
-        return {
-          ...node,
-          level
-        };
-      });
-
-      setNodes(nodesWithLevel);
-    } catch (error) {
-      console.error('Error fetching nodes:', error);
-      setError('Failed to load stories');
-    } finally {
-      setLoading(false);
+      }
     }
   };
 

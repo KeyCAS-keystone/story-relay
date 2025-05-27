@@ -145,18 +145,48 @@ export default function Submit() {
   }, [selectedNodeId, parentNodes]);
 
   const fetchParentNodes = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('nodes')
-        .select('*')
-        .eq('status', 'approved')
-        .order('created_at', { ascending: false });
+    const MAX_RETRIES = 3;
+    const TIMEOUT_MS = 10000; // 10 seconds timeout
+    let retryCount = 0;
 
-      if (error) throw error;
-      setParentNodes(data || []);
-    } catch (error) {
-      console.error('Error fetching parent nodes:', error);
-      setError('Failed to load available story branches');
+    const fetchWithTimeout = async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+      try {
+        const { data, error } = await supabase
+          .from('nodes')
+          .select('*')
+          .eq('status', 'approved')
+          .order('created_at', { ascending: false });
+
+        clearTimeout(timeoutId);
+
+        if (error) throw error;
+        return data;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        throw error;
+      }
+    };
+
+    while (retryCount < MAX_RETRIES) {
+      try {
+        const data = await fetchWithTimeout();
+        setParentNodes(data || []);
+        return; // Success, exit the retry loop
+      } catch (error) {
+        retryCount++;
+        console.error(`Error fetching parent nodes (attempt ${retryCount}/${MAX_RETRIES}):`, error);
+        
+        if (retryCount === MAX_RETRIES) {
+          setError('Failed to load available story branches. Please try refreshing the page.');
+        } else {
+          // Wait before retrying (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000));
+          continue;
+        }
+      }
     }
   };
 
