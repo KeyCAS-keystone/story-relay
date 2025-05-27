@@ -11,7 +11,7 @@ interface Node {
   content: string;
   summary: string;
   position: number;
-  parent_id?: string;
+  parent_id: string | null;
 }
 
 const LOCAL_STORAGE_KEY = 'storyRelaySubmitFormData';
@@ -28,6 +28,7 @@ export default function Submit() {
   const [parentNodes, setParentNodes] = useState<Node[]>([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [currentStarterNode, setCurrentStarterNode] = useState<Node | null>(null);
   
   const [selectedNodeId, setSelectedNodeId] = useState<string>(() => {
     if (typeof window !== 'undefined') {
@@ -104,6 +105,44 @@ export default function Submit() {
 
     fetchDailyWordCount();
   }, [user]);
+
+  useEffect(() => {
+    if (selectedNodeId && parentNodes.length > 0) {
+      let currentNode = parentNodes.find(n => n.id === selectedNodeId);
+      if (!currentNode) {
+        setCurrentStarterNode(null);
+        return;
+      }
+
+      let rootNodeCandidate = currentNode;
+      const visited = new Set<string>();
+      visited.add(rootNodeCandidate.id);
+
+      while (rootNodeCandidate.parent_id !== null) {
+        const parent = parentNodes.find(n => n.id === rootNodeCandidate.parent_id);
+        if (parent) {
+          if (visited.has(parent.id)) { // Cycle detected
+            console.error("Cycle detected in parent chain for node:", selectedNodeId);
+            setCurrentStarterNode(null); // Or handle error appropriately
+            return;
+          }
+          rootNodeCandidate = parent;
+          visited.add(parent.id);
+        } else {
+          // Parent not found in the loaded parentNodes, but parent_id exists.
+          // This could mean parentNodes is incomplete or the data is inconsistent.
+          // We'll consider the current rootNodeCandidate as the furthest we can go.
+          console.warn(`Parent node with ID ${rootNodeCandidate.parent_id} not found for node ${rootNodeCandidate.id}. Displaying current node as starter if it has no parent_id.`);
+          // If this "orphan" still has a parent_id, it's an issue.
+          // If its parent_id is null, then it's a root.
+          break; 
+        }
+      }
+      setCurrentStarterNode(rootNodeCandidate);
+    } else {
+      setCurrentStarterNode(null); // No selected node or no parent nodes loaded
+    }
+  }, [selectedNodeId, parentNodes]);
 
   const fetchParentNodes = async () => {
     try {
@@ -228,18 +267,9 @@ export default function Submit() {
     }
   };
 
-  // Find the very first node (chronologically earliest, i.e., root node)
-  const starterNode = parentNodes.length > 0
-    ? parentNodes.reduce((earliest, node) => {
-        // If no parent_id, it's a root; if both are root, pick the earliest created_at
-        if (!node.parent_id && (!earliest || new Date((node as any).created_at) < new Date((earliest as any).created_at))) {
-          return node;
-        }
-        return earliest;
-      }, undefined as Node | undefined)
-    : undefined;
-
-  const selectedNode = parentNodes.find(n => n.id === selectedNodeId);
+  console.log('parentNodes', parentNodes);
+  console.log('selectedNode', parentNodes.find(n => n.id === selectedNodeId));
+  console.log('currentStarterNode', currentStarterNode);
 
   return (
     <Layout>
@@ -270,27 +300,28 @@ export default function Submit() {
 
         <div className="flex flex-col md:flex-row md:space-x-6">
           {/* Reference nodes on the left, now split vertically */}
-          <div className="w-full md:max-w-2/4 mb-6 md:mb-0 flex flex-col space-y-6">
-            {starterNode && (
+          <div className="md:max-w-2/4 mb-6 md:mb-0 flex flex-col space-y-6">
+            {/* Starter selector */}
+            {currentStarterNode && (
               <>
                 <div className="text-s font-semibold text-gray-500 mb-1 themed-label">Story Prompt</div>
                 <div className="h-60 overflow-y-auto bg-gray-50 border rounded-md p-3 themed-input">
-                  <div className="font-bold text-sm mb-1 themed-input">{starterNode.summary}</div>
+                  <div className="font-bold text-sm mb-1 themed-input">{currentStarterNode.summary}</div>
                   <div className="text-xs text-gray-700 themed-input">
-                    {starterNode.content.split('\n').map((line, idx) => (
+                    {currentStarterNode.content.split('\n').map((line, idx) => (
                       <div key={idx} className="mb-2 last:mb-0">{line}</div>
                     ))}
                   </div>
                 </div>
               </>
             )}
-            {selectedNode && (
+            {parentNodes.find(n => n.id === selectedNodeId) && (
               <>
                 <div className="text-s font-semibold text-gray-500 mb-1 themed-label">Continue From</div>
                 <div className="h-58 overflow-y-auto bg-gray-50 border rounded-md p-3 themed-input">
-                  <div className="font-bold text-sm mb-1 themed-input">{selectedNode.summary}</div>
+                  <div className="font-bold text-sm mb-1 themed-input">{parentNodes.find(n => n.id === selectedNodeId)?.summary}</div>
                   <div className="text-xs text-gray-700 themed-input">
-                    {selectedNode.content.split('\n').map((line, idx) => (
+                    {parentNodes.find(n => n.id === selectedNodeId)?.content.split('\n').map((line, idx) => (
                       <div key={idx} className="mb-2 last:mb-0">{line}</div>
                     ))}
                   </div>
@@ -299,7 +330,7 @@ export default function Submit() {
             )}
           </div>
           {/* Submission form on the right */}
-          <form onSubmit={handleSubmit} className="space-y-6 md:w-3/5">
+          <form onSubmit={handleSubmit} className={`space-y-6 ${!selectedNodeId ? 'w-full' : 'md:w-3/5'}`}>
             <div>
               <label htmlFor="parent" className="block text-sm font-medium themed-label">
                 Continue from:
