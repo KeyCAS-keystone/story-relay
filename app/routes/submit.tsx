@@ -273,7 +273,7 @@ export default function Submit() {
           <div className="w-full md:max-w-2/4 mb-6 md:mb-0 flex flex-col space-y-6">
             {starterNode && (
               <>
-                <div className="text-s font-semibold text-gray-500 mb-1 themed-label">Story prompt</div>
+                <div className="text-s font-semibold text-gray-500 mb-1 themed-label">Story Prompt</div>
                 <div className="h-60 overflow-y-auto bg-gray-50 border rounded-md p-3 themed-input">
                   <div className="font-bold text-sm mb-1 themed-input">{starterNode.summary}</div>
                   <div className="text-xs text-gray-700 themed-input">
