@@ -10,6 +10,7 @@ interface Node {
   content: string;
   summary: string;
   position: number;
+  parent_id?: string;
 }
 
 const LOCAL_STORAGE_KEY = 'storyRelaySubmitFormData';
@@ -226,9 +227,22 @@ export default function Submit() {
     }
   };
 
+  // Find the very first node (chronologically earliest, i.e., root node)
+  const starterNode = parentNodes.length > 0
+    ? parentNodes.reduce((earliest, node) => {
+        // If no parent_id, it's a root; if both are root, pick the earliest created_at
+        if (!node.parent_id && (!earliest || new Date((node as any).created_at) < new Date((earliest as any).created_at))) {
+          return node;
+        }
+        return earliest;
+      }, undefined as Node | undefined)
+    : undefined;
+
+  const selectedNode = parentNodes.find(n => n.id === selectedNodeId);
+
   return (
     <Layout>
-      <div className="max-w-2xl mx-auto pb-20">
+      <div className="max-w-4xl mx-auto pb-20">
         <h1 className="text-3xl font-bold themed-heading mb-8">Submit Your Story</h1>
         
         {error && (
@@ -243,75 +257,107 @@ export default function Submit() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="parent" className="block text-sm font-medium themed-label">
-              Continue from:
-            </label>
-            <select
-              id="parent"
-              value={selectedNodeId}
-              onChange={(e) => setSelectedNodeId(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white themed-input"
-              required
-            >
-              <option value="">Select a story to continue from</option>
-              {parentNodes.map((node) => (
-                <option key={node.id} value={node.id}>
-                  {node.summary} ({node.content.substring(0, 30)}...)
-                </option>
-              ))}
-            </select>
+        <div className="flex flex-col md:flex-row md:space-x-6">
+          {/* Reference nodes on the left, now split vertically */}
+          <div className="w-full md:max-w-2/4 mb-6 md:mb-0 flex flex-col space-y-6">
+            {starterNode && (
+              <>
+                <div className="text-s font-semibold text-gray-500 mb-1 themed-label">Starter Node</div>
+                <div className="h-60 overflow-y-auto bg-gray-50 border rounded-md p-3 themed-input">
+                  <div className="font-bold text-sm mb-1 themed-input">{starterNode.summary}</div>
+                  <div className="text-xs text-gray-700 themed-input">
+                    {starterNode.content.split('\n').map((line, idx) => (
+                      <div key={idx} className="mb-2 last:mb-0">{line}</div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+            {selectedNode && (
+              <>
+                <div className="text-s font-semibold text-gray-500 mb-1 themed-label">Continue From</div>
+                <div className="h-58 overflow-y-auto bg-gray-50 border rounded-md p-3 themed-input">
+                  <div className="font-bold text-sm mb-1 themed-input">{selectedNode.summary}</div>
+                  <div className="text-xs text-gray-700 themed-input">
+                    {selectedNode.content.split('\n').map((line, idx) => (
+                      <div key={idx} className="mb-2 last:mb-0">{line}</div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
-
-          <div>
-            <label htmlFor="content" className="block text-sm font-medium themed-label">
-              Your Story (1-5 sentences)
-            </label>
-            <div className="relative">
-              <textarea
-                id="content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                rows={4}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white themed-input"
+          {/* Submission form on the right */}
+          <form onSubmit={handleSubmit} className="space-y-6 md:w-3/5">
+            <div>
+              <label htmlFor="parent" className="block text-sm font-medium themed-label">
+                Continue from:
+              </label>
+              <select
+                id="parent"
+                value={selectedNodeId}
+                onChange={(e) => setSelectedNodeId(e.target.value)}
+                className="mt-1 block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white themed-input"
                 required
-              />
-              <div className="absolute bottom-2 right-2 text-sm text-gray-500">
-                <span className={wordCount + dailyWordCount > 500 ? 'text-red-500' : ''}>
-                  {wordCount} words
-                </span>
-                {dailyWordCount > 0 && (
-                  <span className="ml-2">
-                    (Today: {dailyWordCount + wordCount}/500)
+              >
+                <option value="">Select a story to continue from</option>
+                {parentNodes.map((node) => (
+                  <option key={node.id} value={node.id}>
+                    {node.summary} ({node.content.substring(0, 30)}...)
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="content" className="block text-sm font-medium themed-label">
+                Your Story
+              </label>
+              <div className="relative">
+                <textarea
+                  id="content"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  rows={4}
+                  className="mt-1 block w-full h-60 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white themed-input"
+                  required
+                />
+                <div className="absolute bottom-2 right-2 text-sm text-gray-500">
+                  <span className={wordCount + dailyWordCount > 500 ? 'text-red-500' : ''}>
+                    {wordCount} words
                   </span>
-                )}
+                  {dailyWordCount > 0 && (
+                    <span className="ml-2">
+                      (Today: {dailyWordCount + wordCount}/500)
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div>
-            <label htmlFor="summary" className="block text-sm font-medium themed-label">
-              Summary
-            </label>
-            <input
-              type="text"
-              id="summary"
-              value={summary}
-              onChange={(e) => setSummary(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white themed-input"
-              required
-            />
-          </div>
+            <div>
+              <label htmlFor="summary" className="block text-sm font-medium themed-label">
+                Summary
+              </label>
+              <input
+                type="text"
+                id="summary"
+                value={summary}
+                onChange={(e) => setSummary(e.target.value)}
+                className="mt-1 block w-full h-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 bg-white themed-input"
+                required
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium themed-button disabled:opacity-50"
-          >
-            {loading ? 'Submitting...' : 'Submit Story'}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium themed-button disabled:opacity-50"
+            >
+              {loading ? 'Submitting...' : 'Submit Story'}
+            </button>
+          </form>
+        </div>
       </div>
 
       {/* Fixed Footer */}
