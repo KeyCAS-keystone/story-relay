@@ -2,29 +2,47 @@ import { useState, useEffect } from 'react';
 
 const TERMS_STORAGE_KEY = 'storyRelayTermsAccepted';
 
-export default function TermsModal() {
+export default function TermsModal({ open, onClose }: { open?: boolean; onClose?: () => void }) {
   const [showModal, setShowModal] = useState(false);
   const [dontShowAgain, setDontShowAgain] = useState(false);
 
   useEffect(() => {
-    const hasAcceptedTerms = localStorage.getItem(TERMS_STORAGE_KEY);
-    if (!hasAcceptedTerms) {
-      setShowModal(true);
+    if (typeof open === 'boolean') {
+      setShowModal(open);
+    } else {
+      const hasAcceptedTerms = localStorage.getItem(TERMS_STORAGE_KEY);
+      if (!hasAcceptedTerms) {
+        setShowModal(true);
+      }
     }
-  }, []);
+  }, [open]);
 
   const handleAccept = () => {
     if (dontShowAgain) {
       localStorage.setItem(TERMS_STORAGE_KEY, 'true');
     }
-    setShowModal(false);
+    if (onClose) {
+      onClose();
+    } else {
+      setShowModal(false);
+    }
   };
 
   if (!showModal) return null;
 
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      if (onClose) {
+        onClose();
+      } else {
+        setShowModal(false);
+      }
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-md z-50 flex items-center justify-center">
-      <div className="bg-white/95 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto bg-[#CD1D43]">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-md z-50 flex items-center justify-center" onClick={handleOverlayClick}>
+      <div className="bg-white/95 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto bg-[#CD1D43]" onClick={e => e.stopPropagation()}>
         <div className="p-6">
           <h2 className="text-2xl font-bold themed-text-primary mb-4">Rules & Guidelines for Round Square Storytelling Relay</h2>
           <div className="space-y-4 themed-text-primary text-sm">

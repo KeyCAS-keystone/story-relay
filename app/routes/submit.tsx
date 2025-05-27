@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import AdminAccess from '../components/AdminAccess';
+import TermsModal from '../components/TermsModal';
 
 interface Node {
   id: string;
@@ -19,6 +20,7 @@ export default function Submit() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const [showGuide, setShowGuide] = useState(false);
   
   if (loading) return null;
   if (!user) return <Navigate to="/login" replace />;
@@ -241,8 +243,18 @@ export default function Submit() {
 
   return (
     <Layout>
+      {/* Guide Modal */}
+      <TermsModal open={showGuide} onClose={() => setShowGuide(false)} />
       <div className="max-w-4xl mx-auto pb-20">
-        <h1 className="text-3xl font-bold themed-heading mb-8">Submit Your Story</h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold themed-heading">Submit Your Story</h1>
+          <button
+            className="px-3 py-1 bg-indigo-600 text-white rounded-md text-sm themed-button focus:outline-none focus:ring-2"
+            onClick={() => setShowGuide(true)}
+          >
+            Show Guide
+          </button>
+        </div>
         
         {error && (
           <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
