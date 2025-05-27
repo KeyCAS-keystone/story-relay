@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -18,10 +18,12 @@ const LOCAL_STORAGE_KEY = 'storyRelaySubmitFormData';
 export default function Submit() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
+
   const [parentNodes, setParentNodes] = useState<Node[]>([]);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   
@@ -125,7 +127,6 @@ export default function Submit() {
       return;
     }
 
-    setLoading(true);
     setError('');
     setSuccess(false);
 
@@ -222,8 +223,6 @@ export default function Submit() {
     } catch (error) {
       console.error('Error submitting story:', error);
       setError(error instanceof Error ? error.message : 'Failed to submit story');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -351,10 +350,9 @@ export default function Submit() {
 
             <button
               type="submit"
-              disabled={loading}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium themed-button disabled:opacity-50"
             >
-              {loading ? 'Submitting...' : 'Submit Story'}
+              Submit Story
             </button>
           </form>
         </div>
