@@ -29,11 +29,10 @@ export default function Home() {
   const [loadingProgress, setLoadingProgress] = useState({ current: 0, total: 0, stage: '' });
   const { loading: authLoading } = useAuth();
 
+  // Start fetching nodes immediately
   useEffect(() => {
-    if (!authLoading) {
-      fetchNodes();
-    }
-  }, [authLoading]);
+    fetchNodes();
+  }, []);
 
   const fetchNodes = async () => {
     const MAX_RETRIES = 3;
