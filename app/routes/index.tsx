@@ -5,6 +5,7 @@ import TermsModal from '../components/TermsModal';
 import Loader from '../components/Loader';
 import Cover from '../components/cover';
 import StoryTree from '../components/StoryTree';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Node {
   id: string;
@@ -26,10 +27,13 @@ export default function Home() {
   const [showCover, setShowCover] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState({ current: 0, total: 0, stage: '' });
+  const { loading: authLoading } = useAuth();
 
   useEffect(() => {
-    fetchNodes();
-  }, []);
+    if (!authLoading) {
+      fetchNodes();
+    }
+  }, [authLoading]);
 
   const fetchNodes = async () => {
     const MAX_RETRIES = 3;
