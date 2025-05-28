@@ -25,6 +25,7 @@ export default function Home() {
   const [error, setError] = useState('');
   const [showCover, setShowCover] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState({ current: 0, total: 0, stage: '' });
 
   useEffect(() => {
     fetchNodes();
@@ -37,13 +38,15 @@ export default function Home() {
 
     const fetchWithTimeout = async () => {
       try {
+        setLoadingProgress({ current: 0, total: 1, stage: 'Fetching nodes from database...' });
         const { data, error } = await supabase
           .from('nodes')
-          .select('*')
+          .select('id, content, summary, parent_id, position, author_id, created_at, status')
           .eq('status', 'approved')
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: false }) as { data: Node[] | null, error: any };
 
         if (error) throw error;
+        setLoadingProgress({ current: 1, total: 1, stage: 'Processing nodes...' });
         return data;
       } catch (error) {
         throw error;
@@ -60,11 +63,39 @@ export default function Home() {
         // Create a map of all nodes for quick lookup
         const nodeMap = new Map((data || []).map(node => [node.id, node]));
         
-        // Calculate levels in memory
+        // Calculate levels in memory and use a Set to track processed nodes
+        const processedNodes = new Set<string>();
+        const levelCache = new Map<string, number>(); // Cache for level calculations
+        
+        const totalNodes = (data || []).length;
+        let processedCount = 0;
+        
         const nodesWithLevel = (data || []).map(node => {
+          processedCount++;
+          setLoadingProgress({
+            current: processedCount,
+            total: totalNodes,
+            stage: 'Calculating node levels...'
+          });
+
+          // Skip if we've already processed this node
+          if (processedNodes.has(node.id)) {
+            return null;
+          }
+          processedNodes.add(node.id);
+
+          // Check if level is already calculated
+          if (levelCache.has(node.id)) {
+            return {
+              ...node,
+              level: levelCache.get(node.id)!
+            };
+          }
+
           let level = 1;
           let currentParentId = node.parent_id;
           const visited = new Set<string>(); // Prevent circular references
+          const path: string[] = [node.id]; // Track the path for caching
           
           while (currentParentId) {
             if (visited.has(currentParentId)) {
@@ -72,6 +103,7 @@ export default function Home() {
               break;
             }
             visited.add(currentParentId);
+            path.push(currentParentId);
             
             const parentNode = nodeMap.get(currentParentId);
             if (parentNode) {
@@ -82,14 +114,20 @@ export default function Home() {
             }
           }
 
+          // Cache levels for all nodes in the path
+          path.forEach((nodeId, index) => {
+            levelCache.set(nodeId, level - index);
+          });
+
           return {
             ...node,
             level
           };
-        });
+        }).filter((node): node is Node => node !== null); // Remove null entries
 
         setNodes(nodesWithLevel);
         setLoading(false);
+        setLoadingProgress({ current: 0, total: 0, stage: '' });
         return; // Success, exit the retry loop
       } catch (error) {
         retryCount++;
@@ -98,6 +136,7 @@ export default function Home() {
         if (retryCount === MAX_RETRIES) {
           setError('Failed to load stories. Please try refreshing the page.');
           setLoading(false);
+          setLoadingProgress({ current: 0, total: 0, stage: '' });
         } else {
           // Wait before retrying (exponential backoff)
           await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000));
@@ -123,8 +162,22 @@ export default function Home() {
         {/* Main Content - Always render but conditionally show content */}
         <Layout>
           {loading ? (
-            <div className="flex justify-center items-center h-64">
+            <div className="flex flex-col justify-center items-center h-64 space-y-4">
               <Loader />
+              {loadingProgress.total > 0 && (
+                <div className="text-center">
+                  <div className="text-sm text-gray-600 mb-2">{loadingProgress.stage}</div>
+                  <div className="w-64 bg-gray-200 rounded-full h-2.5">
+                    <div 
+                      className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                      style={{ width: `${(loadingProgress.current / loadingProgress.total) * 100}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {loadingProgress.current} / {loadingProgress.total} nodes
+                  </div>
+                </div>
+              )}
             </div>
           ) : error ? (
             <div className="text-red-600">{error}</div>
