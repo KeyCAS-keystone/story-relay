@@ -237,8 +237,8 @@ export default function Submit() {
       }
 
       const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
-      if (sentences.length < 1 || sentences.length > 5) {
-        throw new Error('Please write 1-5 sentences');
+      if (sentences.length < 1 || sentences.length > 500) {
+        throw new Error('Please write 1-500 sentences');
       }
 
       const parentNode = parentNodes.find(n => n.id === selectedNodeId);
@@ -255,7 +255,7 @@ export default function Submit() {
       if (countError) throw countError;
 
       const nextPosition = (existingChildren?.length || 0) + 1;
-      if (nextPosition > 5) {
+      if (nextPosition > 3) {
         throw new Error('This story branch has reached its maximum number of continuations (5)');
       }
 
