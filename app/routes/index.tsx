@@ -27,12 +27,42 @@ export default function Home() {
   const [showCover, setShowCover] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState({ current: 0, total: 0, stage: '' });
+  const [showRefreshButton, setShowRefreshButton] = useState(false);
   const { loading: authLoading } = useAuth();
 
   // Start fetching nodes immediately
   useEffect(() => {
     fetchNodes();
   }, []);
+
+  // Add timeout detection
+  useEffect(() => {
+    if (loading) {
+      const timer = setTimeout(() => {
+        setShowRefreshButton(true);
+      }, 2000); // Show refresh button after 2 seconds
+
+      return () => clearTimeout(timer);
+    } else {
+      setShowRefreshButton(false);
+    }
+  }, [loading]);
+
+  const handleHardRefresh = () => {
+    // Clear cookies
+    document.cookie.split(";").forEach(function(c) { 
+      document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+    });
+    
+    // Clear local storage
+    localStorage.clear();
+    
+    // Clear session storage
+    sessionStorage.clear();
+    
+    // Hard refresh the page
+    window.location.reload(true);
+  };
 
   const fetchNodes = async () => {
     const MAX_RETRIES = 3;
@@ -180,6 +210,14 @@ export default function Home() {
                     {loadingProgress.current} / {loadingProgress.total} nodes
                   </div>
                 </div>
+              )}
+              {showRefreshButton && (
+                <button
+                  onClick={handleHardRefresh}
+                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200"
+                >
+                  Click if the page is not loading
+                </button>
               )}
             </div>
           ) : error ? (
