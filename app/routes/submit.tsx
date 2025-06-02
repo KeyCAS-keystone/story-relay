@@ -237,7 +237,7 @@ export default function Submit() {
       }
 
       const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
-      if (sentences.length < 1 || sentences.length > 500) {
+      if (sentences.length < 1 || sentences.length > 50000) {
         throw new Error('Please write 1-500 sentences');
       }
 
