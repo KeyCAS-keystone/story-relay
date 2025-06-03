@@ -232,13 +232,13 @@ export default function Submit() {
       const wordCount = content.trim().split(/\s+/).length;
       const newTotalCount = userData.daily_word_count + wordCount;
 
-      if (newTotalCount > 500) {
-        throw new Error(`You have exceeded the daily limit of 500 words. You have used ${userData.daily_word_count} words today, and this submission would add ${wordCount} more words.`);
+      if (newTotalCount > 50000) {
+        throw new Error(`You have exceeded the daily limit of 50000 words. You have used ${userData.daily_word_count} words today, and this submission would add ${wordCount} more words.`);
       }
 
       const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
       if (sentences.length < 1 || sentences.length > 50000) {
-        throw new Error('Please write 1-500 sentences');
+        throw new Error('Please write 1-50000 sentences');
       }
 
       const parentNode = parentNodes.find(n => n.id === selectedNodeId);
@@ -395,12 +395,12 @@ export default function Submit() {
                   required
                 />
                 <div className="absolute bottom-2 right-2 text-sm text-gray-500">
-                  <span className={wordCount + dailyWordCount > 500 ? 'text-red-500' : ''}>
+                  <span className={wordCount + dailyWordCount > 50000 ? 'text-red-500' : ''}>
                     {wordCount} words
                   </span>
                   {dailyWordCount > 0 && (
                     <span className="ml-2">
-                      (Today: {dailyWordCount + wordCount}/500)
+                      (Today: {dailyWordCount + wordCount}/50000)
                     </span>
                   )}
                 </div>
